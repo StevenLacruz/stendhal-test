@@ -1,0 +1,56 @@
+---
+import Analytics from '@vercel/analytics/astro';
+import SkipLink from '../components/SkipLink.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import SEO from '../components/SEO.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  ogType?: 'website' | 'article';
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  noIndex?: boolean;
+  overlay?: boolean;
+  showFooter?: boolean;
+}
+
+const {
+  title,
+  description,
+  path,
+  ogType,
+  jsonLd,
+  noIndex,
+  overlay = false,
+  showFooter = true,
+} = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a0906" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <SEO
+      title={title}
+      description={description}
+      path={path}
+      ogType={ogType}
+      jsonLd={jsonLd}
+      noIndex={noIndex}
+    />
+  </head>
+  <body class:list={{ 'is-overlay': overlay }}>
+    <SkipLink />
+    <SiteHeader currentPath={currentPath} />
+    <slot />
+    {showFooter && <SiteFooter />}
+    <Analytics />
+  </body>
+</html>

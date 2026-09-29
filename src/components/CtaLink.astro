@@ -1,0 +1,32 @@
+---
+interface Props {
+  href: string;
+}
+
+const { href } = Astro.props;
+---
+
+<a class="cta tap-target" href={href}><slot /></a>
+
+<style>
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: clamp(1.5rem, 3vw, 2.15rem);
+    letter-spacing: -0.03em;
+    text-decoration: none;
+  }
+
+  .cta:hover,
+  .cta:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 0.16em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cta {
+      transition: none;
+    }
+  }
+</style>

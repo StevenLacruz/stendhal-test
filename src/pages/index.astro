@@ -1,0 +1,822 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getHome, getSettings } from '../lib/content';
+
+const home = await getHome();
+const settings = await getSettings();
+const { headline, subheadline, about, seoTitle, seoDescription } = home.data;
+const year = new Date().getFullYear();
+const mail = `mailto:${settings.data.email}`;
+const organizationId = new URL('/#organization', Astro.site).toString();
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': organizationId,
+    name: settings.data.siteName,
+    url: Astro.site?.toString(),
+    email: settings.data.email,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: settings.data.siteName,
+    url: Astro.site?.toString(),
+    publisher: { '@id': organizationId },
+  },
+];
+
+const practices = [
+  {
+    n: '01',
+    title: 'Dirección artística',
+    text: 'La idea, el tono y la escena, antes del primer plano.',
+  },
+  {
+    n: '02',
+    title: 'Producción',
+    text: 'Elenco, técnica y tiempo, hasta el último instante.',
+  },
+  {
+    n: '03',
+    title: 'Eventos',
+    text: 'El encuentro completo, de la llegada a lo que se recuerda.',
+  },
+  {
+    n: '04',
+    title: 'Experiencias a medida',
+    text: 'Lo que no cabe en un formato. Se piensa desde cero.',
+  },
+];
+
+const strip = [
+  {
+    src: '/media/solista.jpg',
+    width: 2200,
+    height: 1467,
+    alt: 'Solista con vestido dorado bajo una luz azul, micrófono en mano.',
+  },
+  {
+    src: '/media/cuerdas.jpg',
+    width: 2200,
+    height: 1465,
+    alt: 'Cuarteto de cuerda con vestuario de época en un salón.',
+  },
+  {
+    src: '/media/salon.jpg',
+    width: 2200,
+    height: 1464,
+    alt: 'Salón con lámparas de araña, copas y un invitado de espaldas.',
+  },
+  {
+    src: '/media/palace.jpg',
+    width: 2200,
+    height: 1460,
+    alt: 'Recibimiento en un vestíbulo con tocados de plumas y luz cálida.',
+  },
+  {
+    src: '/media/conjunto.jpg',
+    width: 2200,
+    height: 1650,
+    alt: 'Cortejo de flamenco y zancos en un jardín, con una tela roja.',
+  },
+  {
+    src: '/media/patio.jpg',
+    width: 2200,
+    height: 1650,
+    alt: 'Figura sobre zancos con una larga cola roja en un patio.',
+  },
+  {
+    src: '/media/escalinata.jpg',
+    width: 2200,
+    height: 1466,
+    alt: 'Vestido rojo sobre una escalinata de piedra.',
+  },
+  {
+    src: '/media/guitarra.jpg',
+    width: 2200,
+    height: 1166,
+    alt: 'Guitarrista en un escenario con humo y luces rojas.',
+  },
+];
+---
+
+<BaseLayout
+  title={seoTitle}
+  description={seoDescription}
+  path="/"
+  jsonLd={jsonLd}
+  overlay
+  showFooter={false}
+>
+  <main>
+    <section class="frame wordmark" id="inicio">
+      <img
+        src="/media/guitarra.jpg"
+        width="2200"
+        height="1166"
+        alt=""
+        fetchpriority="high"
+      />
+      <p class="lockup">
+        <span>El</span>
+        <span>Efecto</span>
+        <span>Stendhal</span>
+      </p>
+    </section>
+
+    <section class="frame claim" id="artistas">
+      <video
+        autoplay
+        muted
+        loop
+        playsinline
+        poster="/media/flamenco-poster.jpg"
+        width="1280"
+        height="864"
+      >
+        <source src="/media/flamenco.mp4" type="video/mp4" />
+      </video>
+      <h1>
+        <span>Hacemos</span>
+        <span>que los</span>
+        <span>eventos</span>
+        <span>sucedan</span>
+      </h1>
+    </section>
+
+    <section class="sheet" id="sobre">
+      <div class="spine">
+        <span class="ring" aria-hidden="true"></span>
+        <p class="pill">Qué hacemos</p>
+      </div>
+      <p class="micro">
+        Dirección artística y producción para que los eventos sucedan. Escena, elenco y tiempo,
+        trabajados como una sola pieza.
+      </p>
+
+      <div class="plate">
+        <img
+          src="/media/voces.jpg"
+          width="2200"
+          height="1468"
+          alt="Voces en un escenario bañado de luz azul."
+        />
+        <div class="plate-copy">
+          <p class="display">
+            <span>El cuerpo</span>
+            <span>se adelanta</span>
+            <span>a la palabra</span>
+          </p>
+          <div class="aside">
+            <p class="eyebrow">Del concepto a la realidad</p>
+            <p>{about}</p>
+            <a class="pill" href="#contacto">Hablemos</a>
+          </div>
+        </div>
+      </div>
+
+      <ol class="practices">
+        {
+          practices.map((item) => (
+            <li id={item.n === '04' ? 'a-medida' : undefined}>
+              <p class="eyebrow">{item.n}</p>
+              <h2>{item.title}</h2>
+              <p>{item.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="marquee" aria-label="Imágenes de producciones">
+      <div class="track">
+        {
+          [...strip, ...strip].map((frame, index) => (
+            <img
+              src={frame.src}
+              width={frame.width}
+              height={frame.height}
+              alt={index < strip.length ? frame.alt : ''}
+              loading="lazy"
+            />
+          ))
+        }
+      </div>
+    </section>
+
+    <figure class="bleed">
+      <img
+        src="/media/escalinata.jpg"
+        width="2200"
+        height="1466"
+        alt="Vestido rojo bajando una escalinata de piedra al aire libre."
+        loading="lazy"
+      />
+    </figure>
+
+    <section class="sheet productions" id="producciones">
+      <p class="pill">Producciones</p>
+      <h2 class="display center">
+        <span>Producciones</span>
+      </h2>
+      <div class="mosaic">
+        <img
+          src="/media/flamenco-poster.jpg"
+          width="1280"
+          height="864"
+          alt="Compañía de flamenco en un salón, con un telón de color detrás."
+          loading="lazy"
+        />
+        <img
+          src="/media/salon.jpg"
+          width="2200"
+          height="1464"
+          alt="Salón de celebración con lámparas de araña y copas."
+          loading="lazy"
+        />
+        <img
+          src="/media/cuerdas.jpg"
+          width="2200"
+          height="1465"
+          alt="Músicos de cuerda con vestuario de época."
+          loading="lazy"
+        />
+      </div>
+    </section>
+
+    <section class="sheet worlds">
+      <div class="split">
+        <img
+          src="/media/palace.jpg"
+          width="2200"
+          height="1460"
+          alt="Vestíbulo de un hotel con un recibimiento de tocados y plumas."
+          loading="lazy"
+        />
+        <div>
+          <p class="eyebrow">A medida</p>
+          <h2 class="display">
+            <span>Lo que</span>
+            <span>no cabe</span>
+            <span>en un</span>
+            <span>formato</span>
+          </h2>
+          <p class="note">Se piensa desde cero.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sheet inspire" id="inspirate">
+      <h2 class="display center">
+        <span>Inspírate</span>
+      </h2>
+      <ul class="trio">
+        <li>
+          <img
+            src="/media/conjunto.jpg"
+            width="2200"
+            height="1650"
+            alt="Cortejo de flamenco y zancos en un jardín."
+            loading="lazy"
+          />
+          <p>Flamenco</p>
+        </li>
+        <li>
+          <img
+            src="/media/solista.jpg"
+            width="2200"
+            height="1467"
+            alt="Solista con vestido dorado en un club."
+            loading="lazy"
+          />
+          <p>En directo</p>
+        </li>
+        <li>
+          <img
+            src="/media/cuerdas.jpg"
+            width="2200"
+            height="1465"
+            alt="Músicos de cuerda en escena, con vestuario de época."
+            loading="lazy"
+          />
+          <p>En escena</p>
+        </li>
+      </ul>
+    </section>
+
+    <figure class="bleed bleed-short">
+      <img
+        src="/media/patio.jpg"
+        width="2200"
+        height="1650"
+        alt="Cola roja sobre la piedra de un patio, a plena luz."
+        loading="lazy"
+      />
+    </figure>
+
+    <section class="sheet contact" id="contacto">
+      <p class="micro left">{subheadline} Cuéntanos qué tienes en mente.</p>
+      <div>
+        <h2 class="display">
+          <span>¿Tienes</span>
+          <span>algo</span>
+          <span>en</span>
+          <span>mente?</span>
+        </h2>
+        <p class="talk">Hablemos.</p>
+        <form data-proposal action={mail} method="post">
+          <label>
+            Nombre
+            <input name="nombre" type="text" autocomplete="name" required />
+          </label>
+          <label>
+            Email
+            <input name="email" type="email" autocomplete="email" required />
+          </label>
+          <label>
+            Teléfono
+            <input name="telefono" type="tel" autocomplete="tel" />
+          </label>
+          <label>
+            Mensaje
+            <textarea name="mensaje" rows="4" required></textarea>
+          </label>
+          <button class="pill" type="submit">Enviar propuesta</button>
+        </form>
+      </div>
+    </section>
+
+    <footer class="colophon">
+      <p class="lockup small">
+        <span>El</span>
+        <span>Efecto</span>
+        <span>Stendhal</span>
+      </p>
+      <a class="mail" href={mail}>{settings.data.email}</a>
+      <p class="tag">{headline}</p>
+      <p class="legal"><small>© {year} {settings.data.siteName}</small></p>
+    </footer>
+  </main>
+</BaseLayout>
+
+<script>
+  const video = document.querySelector('video');
+  if (video && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    video.pause();
+  }
+
+  const form = document.querySelector('[data-proposal]');
+  if (form instanceof HTMLFormElement) {
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      const nombre = String(data.get('nombre') ?? '').trim();
+      const email = String(data.get('email') ?? '').trim();
+      const telefono = String(data.get('telefono') ?? '').trim();
+      const mensaje = String(data.get('mensaje') ?? '').trim();
+      const lines = [`Nombre: ${nombre}`, `Email: ${email}`];
+      if (telefono) lines.push(`Teléfono: ${telefono}`);
+      lines.push('', mensaje);
+      const body = lines.join('\n');
+      const href = `mailto:eventos@elefectostendhal.com?subject=${encodeURIComponent('Propuesta')}&body=${encodeURIComponent(body)}`;
+      window.location.href = href;
+    });
+  }
+</script>
+
+<style>
+  main {
+    background: #000;
+  }
+
+  .frame {
+    position: relative;
+    display: grid;
+    min-height: 100dvh;
+    place-items: center;
+    overflow: hidden;
+    color: #fff;
+  }
+
+  .frame img,
+  .frame video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.46), transparent 28%),
+      linear-gradient(to top, rgba(0, 0, 0, 0.38), transparent 42%);
+  }
+
+  .lockup,
+  h1,
+  .display {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    font-weight: 200;
+    letter-spacing: -0.02em;
+    line-height: 0.82;
+    text-transform: uppercase;
+    text-wrap: unset;
+  }
+
+  .lockup span,
+  h1 span,
+  .display span {
+    display: block;
+  }
+
+  .lockup {
+    font-size: clamp(3.4rem, 7.3vw, 6.66rem);
+    text-align: center;
+  }
+
+  h1 {
+    font-size: clamp(3.5rem, 13.4vw, 12.35rem);
+    text-align: center;
+  }
+
+  .sheet {
+    padding: clamp(5.5rem, 12vw, 9rem) var(--spacing-gutter);
+  }
+
+  .spine {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.35rem;
+  }
+
+  .spine::before {
+    content: '';
+    width: 1px;
+    height: clamp(4rem, 10vh, 7rem);
+    background: rgba(255, 255, 255, 0.28);
+  }
+
+  .ring {
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 50%;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0.72rem 1.35rem;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    line-height: 1;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .micro {
+    max-width: 34rem;
+    margin: clamp(2.5rem, 6vw, 4.5rem) auto 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    line-height: 1.75;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .micro.left {
+    margin: 0;
+    text-align: left;
+  }
+
+  .plate {
+    position: relative;
+    margin: clamp(4rem, 9vw, 7rem) calc(var(--spacing-gutter) * -1) 0;
+    min-height: min(88vh, 920px);
+    overflow: hidden;
+  }
+
+  .plate img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .plate-copy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: clamp(2rem, 5vw, 4rem);
+    min-height: min(88vh, 920px);
+    padding: clamp(1.5rem, 4vw, 3rem);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.12) 48%, transparent 70%);
+  }
+
+  .display {
+    font-size: clamp(2.8rem, 7.2vw, 6.6rem);
+  }
+
+  .aside {
+    display: grid;
+    gap: 1rem;
+    max-width: 22rem;
+  }
+
+  .aside p:last-of-type {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  .aside .pill {
+    justify-self: start;
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .practices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(3rem, 7vw, 5.5rem) clamp(2rem, 8vw, 7rem);
+    margin: clamp(4.5rem, 10vw, 8rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .practices h2 {
+    margin: 0.85rem 0 0.9rem;
+    font-weight: 200;
+    font-size: clamp(1.8rem, 2.9vw, 2.65rem);
+    letter-spacing: -0.03em;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .practices p:last-child {
+    max-width: 28rem;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.54);
+    font-size: 0.95rem;
+  }
+
+  .marquee {
+    overflow: hidden;
+    padding-block: 0.4rem  clamp(4rem, 8vw, 6rem);
+  }
+
+  .track {
+    display: flex;
+    gap: 0.7rem;
+    width: max-content;
+    animation: drift 90s linear infinite;
+  }
+
+  .track img {
+    width: min(46vw, 340px);
+    height: min(46vw, 340px);
+    object-fit: cover;
+  }
+
+  @keyframes drift {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .bleed {
+    margin: 0;
+  }
+
+  .bleed img {
+    width: 100%;
+    height: min(150vh, 1280px);
+    object-fit: cover;
+    object-position: center 35%;
+  }
+
+  .bleed-short img {
+    height: min(92vh, 820px);
+    object-position: center 60%;
+  }
+
+  .productions {
+    display: grid;
+    justify-items: center;
+    gap: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .center {
+    text-align: center;
+  }
+
+  .mosaic {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0.7rem;
+    width: 100%;
+  }
+
+  .mosaic img {
+    width: 100%;
+    height: 100%;
+    min-height: 16rem;
+    object-fit: cover;
+  }
+
+  .mosaic img:first-child {
+    grid-row: 1 / span 2;
+    min-height: 34rem;
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: end;
+  }
+
+  .split img {
+    width: 100%;
+    height: min(78vh, 760px);
+    object-fit: cover;
+  }
+
+  .note {
+    margin: 1.4rem 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 1.05rem;
+  }
+
+  .inspire {
+    display: grid;
+    justify-items: center;
+    gap: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .trio {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.7rem;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .trio img {
+    width: 100%;
+    height: min(62vh, 560px);
+    object-fit: cover;
+  }
+
+  .trio p {
+    margin: 0.8rem 0 0;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .contact {
+    display: grid;
+    grid-template-columns: minmax(12rem, 0.7fr) 1.3fr;
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+
+  .talk {
+    margin: 1.25rem 0 0;
+    font-size: clamp(1.4rem, 2vw, 1.8rem);
+    font-weight: 200;
+    letter-spacing: -0.03em;
+  }
+
+  form {
+    display: grid;
+    gap: 1.35rem;
+    max-width: 36rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  label {
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 0.65rem 0;
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 1rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  form .pill {
+    justify-self: start;
+    margin-top: 0.5rem;
+  }
+
+  .colophon {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr 1fr;
+    gap: 2rem clamp(1.5rem, 4vw, 3rem);
+    align-items: end;
+    padding: clamp(4rem, 8vw, 6rem) var(--spacing-gutter) 2.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .lockup.small {
+    font-size: clamp(2rem, 3.4vw, 3.1rem);
+    text-align: left;
+  }
+
+  .mail {
+    font-size: clamp(1.2rem, 2.4vw, 2rem);
+    font-weight: 200;
+    letter-spacing: -0.03em;
+    text-decoration: none;
+  }
+
+  .tag {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .legal {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.46);
+  }
+
+  @media (max-width: 860px) {
+    .practices,
+    .split,
+    .contact,
+    .colophon,
+    .trio,
+    .mosaic {
+      grid-template-columns: 1fr;
+    }
+
+    .mosaic img:first-child {
+      grid-row: auto;
+      min-height: 18rem;
+    }
+
+    .tag {
+      grid-column: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track {
+      animation: none;
+      flex-wrap: wrap;
+      width: auto;
+      padding-inline: var(--spacing-gutter);
+    }
+  }
+</style>

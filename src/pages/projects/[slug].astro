@@ -1,0 +1,122 @@
+---
+export const prerender = true;
+
+import { Image } from 'astro:assets';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getSettings } from '../../lib/content';
+import { projectDocumentTitle } from '../../lib/seo';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const settings = await getSettings();
+const title = projectDocumentTitle(project.data.title, settings.data.siteName);
+const { Content } = await render(project);
+const path = `/projects/${project.id}`;
+---
+
+<BaseLayout
+  title={title}
+  description={project.data.summary}
+  path={path}
+  ogType="article"
+  jsonLd={{
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    name: project.data.title,
+    description: project.data.summary,
+    dateCreated: String(project.data.year),
+    creator: {
+      '@type': 'Organization',
+      name: settings.data.siteName,
+    },
+  }}
+>
+  <main id="contenido">
+    <article>
+      <header>
+        <h1>{project.data.title}</h1>
+        <p>{project.data.client} · {project.data.year}</p>
+        <p>{project.data.role}</p>
+      </header>
+      <Image
+        src={project.data.cover}
+        alt={`Imagen de portada de ${project.data.title}`}
+        width={1600}
+        height={1000}
+        loading="eager"
+        fetchpriority="high"
+      />
+      <div class="body">
+        <Content />
+      </div>
+      {
+        project.data.gallery.length > 0 && (
+          <ul>
+            {project.data.gallery.map((image) => (
+              <li>
+                <Image
+                  src={image}
+                  alt=""
+                  width={1200}
+                  height={800}
+                  loading="lazy"
+                />
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </article>
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    max-width: 48rem;
+    margin-inline: auto;
+    padding: clamp(3rem, 8vw, 5rem) var(--spacing-gutter) 5rem;
+  }
+
+  header p {
+    margin: 0.85rem 0 0;
+    color: var(--color-muted);
+    font-size: 1rem;
+  }
+
+  h1 {
+    margin: 0 0 1rem;
+    font-size: clamp(2.75rem, 7vw, 5rem);
+  }
+
+  img {
+    width: 100%;
+    margin-block: 2.5rem;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+
+  .body :global(p) {
+    margin: 0 0 1rem;
+    font-size: 1.0625rem;
+  }
+
+  ul {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

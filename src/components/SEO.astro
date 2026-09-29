@@ -1,0 +1,65 @@
+---
+import { getSettings } from '../lib/content';
+import { absoluteUrl, canonicalPath } from '../lib/urls';
+import { assertSeoLength } from '../lib/seo';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  ogType?: 'website' | 'article';
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  noIndex?: boolean;
+}
+
+const {
+  title,
+  description,
+  path,
+  ogType = 'website',
+  jsonLd,
+  noIndex = false,
+} = Astro.props;
+
+assertSeoLength(title, description, path);
+
+const settings = await getSettings();
+const site = Astro.site;
+if (!site) {
+  throw new Error('Falta `site` en astro.config.mjs; los canonical y Open Graph no pueden ser absolutos.');
+}
+
+const url = absoluteUrl(canonicalPath(path), site);
+const imagePath = settings.data.ogImage.startsWith('/')
+  ? settings.data.ogImage
+  : `/${settings.data.ogImage}`;
+const ogImage = absoluteUrl(imagePath, site);
+const jsonLdPayload = jsonLd
+  ? Array.isArray(jsonLd)
+    ? jsonLd
+    : [jsonLd]
+  : [];
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+{noIndex && <meta name="robots" content="noindex, nofollow" />}
+<link rel="canonical" href={url} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content={url} />
+<meta property="og:type" content={ogType} />
+<meta property="og:locale" content="es_ES" />
+<meta property="og:site_name" content={settings.data.siteName} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+{
+  jsonLdPayload.map((item) => (
+    <script type="application/ld+json" set:html={JSON.stringify(item)} />
+  ))
+}

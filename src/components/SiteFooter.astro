@@ -1,0 +1,69 @@
+---
+import { getSettings } from '../lib/content';
+
+const settings = await getSettings();
+const year = new Date().getFullYear();
+---
+
+<footer>
+  <p>
+    <a href={`mailto:${settings.data.email}`}>{settings.data.email}</a>
+  </p>
+  {
+    settings.data.socials.length > 0 && (
+      <ul>
+        {settings.data.socials.map((social) => (
+          <li>
+            <a href={social.href} rel="me">
+              {social.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+  <p>
+    <small>© {year} {settings.data.siteName}</small>
+  </p>
+</footer>
+
+<style>
+  footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding: 2.5rem var(--spacing-gutter);
+    border-top: 1px solid var(--color-line);
+    color: var(--color-muted);
+  }
+
+  p,
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+
+  ul {
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    text-decoration: none;
+  }
+
+  a:hover,
+  a:focus-visible {
+    color: var(--color-ink);
+  }
+
+  small {
+    font-size: 0.75rem;
+  }
+</style>

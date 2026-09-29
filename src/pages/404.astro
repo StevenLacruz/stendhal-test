@@ -1,0 +1,44 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CtaLink from '../components/CtaLink.astro';
+import { getSettings } from '../lib/content';
+
+const settings = await getSettings();
+const title = 'Esta página no está en el sitio | El Efecto Stendhal';
+const description =
+  'La dirección no corresponde a ninguna página de El Efecto Stendhal. Vuelve al inicio o escríbenos para hablar de tu próximo evento con calma.';
+---
+
+<BaseLayout title={title} description={description} path="/404" noIndex>
+  <main id="contenido">
+    <h1>Esta página no está en el sitio</h1>
+    <p>
+      La dirección no existe o se ha movido. Puedes volver al inicio o escribir a
+      {settings.data.email}.
+    </p>
+    <CtaLink href="/">Volver al inicio</CtaLink>
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100dvh;
+    max-width: 18em;
+    padding: 6rem var(--spacing-gutter) 4rem;
+  }
+
+  h1 {
+    margin: 0 0 1.25rem;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+  }
+
+  p {
+    margin: 0 0 2rem;
+    color: var(--color-muted);
+  }
+</style>
