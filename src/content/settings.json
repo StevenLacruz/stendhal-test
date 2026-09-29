@@ -4,7 +4,12 @@
   "defaultDescription": "Productora de eventos premium en Madrid. Dirección artística, producción y experiencias a medida. Hacemos que los eventos sucedan. Hablemos.",
   "ogImage": "og-default.png",
   "email": "eventos@elefectostendhal.com",
-  "socials": [],
+  "socials": [
+    {
+      "label": "Instagram",
+      "href": "https://www.instagram.com/elefectostendhal"
+    }
+  ],
   "projectsTitle": "Producciones de eventos y experiencias | El Efecto Stendhal",
   "projectsDescription": "Selección visual de producciones de El Efecto Stendhal: flamenco, música en directo, performances y presentaciones. Así suceden los eventos.",
   "projectsHeading": "Producciones",

@@ -9,6 +9,7 @@ const settings = await getSettings();
 const { headline, subheadline, about, seoTitle, seoDescription } = home.data;
 const year = new Date().getFullYear();
 const mail = `mailto:${settings.data.email}`;
+const instagram = settings.data.socials.find((social) => social.href.includes('instagram.com'));
 const organizationId = new URL('/#organization', Astro.site).toString();
 
 const jsonLd = [
@@ -29,78 +30,109 @@ const jsonLd = [
   },
 ];
 
-const practices = [
+const artists = [
   {
-    n: '01',
-    title: 'Dirección artística',
-    text: 'La idea, el tono y la escena, antes del primer plano.',
+    title: 'Music',
+    text: 'Bandas · DJs · cantantes · orquestas · músicos',
+    src: '/media/cantante.jpg',
+    alt: 'Cantante con vestido de flecos dorados, en un escenario.',
   },
   {
-    n: '02',
-    title: 'Producción',
-    text: 'Elenco, técnica y tiempo, hasta el último instante.',
+    title: 'Dance',
+    text: 'Flamenco · urbano · contemporáneo · coreografías',
+    src: '/media/conjunto.jpg',
+    alt: 'Cortejo de flamenco y zancos en un jardín.',
   },
   {
-    n: '03',
-    title: 'Eventos',
-    text: 'El encuentro completo, de la llegada a lo que se recuerda.',
+    title: 'Show',
+    text: 'Performances · acrobacia · magia · humor · circo',
+    src: '/media/casa.jpg',
+    alt: 'Tres performers bajo un neón rosa, en un escenario.',
   },
   {
-    n: '04',
-    title: 'Experiencias a medida',
-    text: 'Lo que no cabe en un formato. Se piensa desde cero.',
+    title: 'Visual',
+    text: 'LED · mapping · audiovisuales · iluminación',
+    src: '/media/banda.jpg',
+    alt: 'Banda en directo frente a una pantalla de escenario.',
+  },
+  {
+    title: 'Talent',
+    text: 'Presentadores · artistas · celebrities · influencers',
+    src: '/media/mascaras.jpg',
+    alt: 'Tres personajes de cine en una entrega de premios.',
+  },
+  {
+    title: 'Immersive',
+    text: 'Experiencias diseñadas específicamente para cada evento',
+    src: '/media/zancos.jpg',
+    alt: 'Artista sobre zancos, con traje lila, brindando.',
   },
 ];
 
-const strip = [
+const concepts = [
   {
-    src: '/media/solista.jpg',
-    width: 2200,
-    height: 1467,
-    alt: 'Solista con vestido dorado bajo una luz azul, micrófono en mano.',
-  },
-  {
-    src: '/media/cuerdas.jpg',
-    width: 2200,
-    height: 1465,
-    alt: 'Cuarteto de cuerda con vestuario de época en un salón.',
-  },
-  {
+    text: 'Unos camareros infiltrados en una cena como artistas.',
     src: '/media/salon.jpg',
-    width: 2200,
-    height: 1464,
-    alt: 'Salón con lámparas de araña, copas y un invitado de espaldas.',
+    alt: 'Salón de celebración con lámparas de araña y copas.',
   },
   {
+    text: 'Un espectáculo que aparece desde el techo.',
+    src: '/media/escalera.jpg',
+    alt: 'Compañía de flamenco en la escalera de un hotel.',
+  },
+  {
+    text: 'Una cena que se convierte en un show.',
+    src: '/media/epoca.jpg',
+    alt: 'Cortejo de época junto a una pared de máscaras.',
+  },
+  {
+    text: 'Un artista internacional cerrando una convención.',
+    src: '/media/solista.jpg',
+    alt: 'Solista con vestido dorado en un club.',
+  },
+  {
+    text: 'Una experiencia audiovisual creada exclusivamente para tu marca.',
+    src: '/media/voces.jpg',
+    alt: 'Voces en un escenario bañado de luz azul.',
+  },
+];
+
+const paths = [
+  {
+    title: 'Sé qué evento tengo',
+    text: 'Quiero organizar un evento',
     src: '/media/palace.jpg',
-    width: 2200,
-    height: 1460,
-    alt: 'Recibimiento en un vestíbulo con tocados de plumas y luz cálida.',
+    alt: 'Vestíbulo de un hotel con un recibimiento de tocados y plumas.',
   },
   {
-    src: '/media/conjunto.jpg',
-    width: 2200,
-    height: 1650,
-    alt: 'Cortejo de flamenco y zancos en un jardín, con una tela roja.',
-  },
-  {
-    src: '/media/patio.jpg',
-    width: 2200,
-    height: 1650,
-    alt: 'Figura sobre zancos con una larga cola roja en un patio.',
-  },
-  {
+    title: 'Sé lo que quiero conseguir',
+    text: 'Quiero sorprender / emocionar / cerrar con impacto.',
     src: '/media/escalinata.jpg',
-    width: 2200,
-    height: 1466,
-    alt: 'Vestido rojo sobre una escalinata de piedra.',
+    alt: 'Vestido rojo bajando una escalinata de piedra al aire libre.',
   },
   {
-    src: '/media/guitarra.jpg',
-    width: 2200,
-    height: 1166,
-    alt: 'Guitarrista en un escenario con humo y luces rojas.',
+    title: 'No tengo ni idea',
+    text: 'Inspírame.',
+    src: '/media/jardin.jpg',
+    alt: 'Zancos y vestuario de flamenco en un jardín.',
   },
+];
+
+const logos = [
+  { src: '/logos/repsol.svg', alt: 'Repsol' },
+  { src: '/logos/elle-education.svg', alt: 'Elle Education' },
+  { src: '/logos/la-liga.svg', alt: 'LaLiga' },
+  { src: '/logos/telepizza.svg', alt: 'Telepizza' },
+  { src: '/logos/loreal.svg', alt: "L'Oréal" },
+  { src: '/logos/yves-saint-laurent.svg', alt: 'Yves Saint Laurent' },
+  { src: '/logos/el-corte-ingles.svg', alt: 'El Corte Inglés' },
+  { src: '/logos/audi.svg', alt: 'Audi' },
+  { src: '/logos/renault.svg', alt: 'Renault' },
+  { src: '/logos/astrazeneca.svg', alt: 'AstraZeneca' },
+  { src: '/logos/nestle.svg', alt: 'Nestlé' },
+  { src: '/logos/johnson-johnson.svg', alt: 'Johnson & Johnson' },
+  { src: '/logos/ilunion-hotels.svg', alt: 'Ilunion Hotels' },
+  { src: '/logos/ey.svg', alt: 'EY' },
 ];
 ---
 
@@ -113,109 +145,128 @@ const strip = [
   showFooter={false}
 >
   <main>
-    <section class="frame wordmark" id="inicio">
+    <section class="frame hero" id="inicio">
+      <video
+        autoplay
+        muted
+        loop
+        playsinline
+        poster="/media/showreel-poster.jpg"
+        width="1920"
+        height="1080"
+        data-hero-video
+      >
+        <source src="/media/showreel.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-copy">
+        <h1>
+          <span>Hacemos que los</span>
+          <span>eventos sucedan</span>
+        </h1>
+        <p class="hero-sub">{subheadline}</p>
+        <a class="pill hero-cta" href="#formulario">Cuéntanos tu evento</a>
+      </div>
+      <span class="sweep" aria-hidden="true"></span>
+    </section>
+
+    <section class="frame wordmark">
       <img
         src="/media/guitarra.jpg"
         width="2200"
         height="1166"
-        alt=""
-        fetchpriority="high"
+        alt="Guitarrista en un escenario con humo y luces rojas."
       />
       <p class="lockup">
-        <span>El</span>
-        <span>Efecto</span>
-        <span>Stendhal</span>
+        <span>Hay momentos que</span>
+        <span>se viven y otros</span>
+        <span>que se recuerdan</span>
       </p>
     </section>
 
-    <section class="frame claim" id="artistas">
+    <section class="sheet" id="artistas" aria-labelledby="artistas-titulo">
+      <p class="eyebrow center">Artistas</p>
+      <h2 id="artistas-titulo" class="display center">
+        <span>¿Qué podemos</span>
+        <span>hacer?</span>
+      </h2>
+      <ul class="tiles acts">
+        {
+          artists.map((item) => (
+            <li>
+              <a class="tile" href="#formulario" data-intent={item.title}>
+                <img src={item.src} width="2200" height="1460" alt={item.alt} />
+                <span class="tile-copy">
+                  <strong>{item.title}</strong>
+                  <span>{item.text}</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a class="pill" href="#inspirate">Descubrir todas las posibilidades →</a>
+    </section>
+
+    <section class="logo-marquee" aria-label="Empresas que confían en nosotros" tabindex="0">
+      <p class="eyebrow logos-label">Empresas que confían en nosotros</p>
+      <div class="logo-track">
+        {
+          [0, 1].map((copy) => (
+            <ul class:list={['logo-set', copy === 1 && 'is-clone']} aria-hidden={copy === 1 ? 'true' : undefined}>
+              {logos.map((logo) => (
+                <li>
+                  <img src={`${logo.src}?v=2`} alt={copy === 0 ? logo.alt : ''} width="160" height="48" loading="lazy" />
+                </li>
+              ))}
+            </ul>
+          ))
+        }
+      </div>
+    </section>
+
+    <a
+      class="bleed instagram-band"
+      href={instagram?.href ?? 'https://www.instagram.com/elefectostendhal'}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <img
+        src="/media/farol.jpg"
+        width="2200"
+        height="1467"
+        alt=""
+        loading="lazy"
+      />
+      <span class="instagram-copy">
+        <span class="display"><span>Instagram</span></span>
+        <span class="micro">Síguenos</span>
+      </span>
+    </a>
+
+    <section class="sheet" id="sobre">
+      <h2 class="display">
+        <span>Hay momentos</span>
+        <span>que se viven.</span>
+      </h2>
+      <p class="display follow">
+        <span>Y otros</span>
+        <span>que se recuerdan.</span>
+      </p>
+      <p class="lede">{about}</p>
+    </section>
+
+    <figure class="bleed video-bleed">
       <video
-        autoplay
         muted
         loop
         playsinline
         poster="/media/flamenco-poster.jpg"
         width="1280"
         height="864"
+        data-flamenco
       >
         <source src="/media/flamenco.mp4" type="video/mp4" />
       </video>
-      <h1>
-        <span>Hacemos</span>
-        <span>que los</span>
-        <span>eventos</span>
-        <span>sucedan</span>
-      </h1>
-    </section>
-
-    <section class="sheet" id="sobre">
-      <div class="spine">
-        <span class="ring" aria-hidden="true"></span>
-        <p class="pill">Qué hacemos</p>
-      </div>
-      <p class="micro">
-        Dirección artística y producción para que los eventos sucedan. Escena, elenco y tiempo,
-        trabajados como una sola pieza.
-      </p>
-
-      <div class="plate">
-        <img
-          src="/media/voces.jpg"
-          width="2200"
-          height="1468"
-          alt="Voces en un escenario bañado de luz azul."
-        />
-        <div class="plate-copy">
-          <p class="display">
-            <span>El cuerpo</span>
-            <span>se adelanta</span>
-            <span>a la palabra</span>
-          </p>
-          <div class="aside">
-            <p class="eyebrow">Del concepto a la realidad</p>
-            <p>{about}</p>
-            <a class="pill" href="#contacto">Hablemos</a>
-          </div>
-        </div>
-      </div>
-
-      <ol class="practices">
-        {
-          practices.map((item) => (
-            <li id={item.n === '04' ? 'a-medida' : undefined}>
-              <p class="eyebrow">{item.n}</p>
-              <h2>{item.title}</h2>
-              <p>{item.text}</p>
-            </li>
-          ))
-        }
-      </ol>
-    </section>
-
-    <section class="marquee" aria-label="Imágenes de producciones">
-      <div class="track">
-        {
-          [...strip, ...strip].map((frame, index) => (
-            <img
-              src={frame.src}
-              width={frame.width}
-              height={frame.height}
-              alt={index < strip.length ? frame.alt : ''}
-              loading="lazy"
-            />
-          ))
-        }
-      </div>
-    </section>
-
-    <figure class="bleed">
-      <img
-        src="/media/escalinata.jpg"
-        width="2200"
-        height="1466"
-        alt="Vestido rojo bajando una escalinata de piedra al aire libre."
-        loading="lazy"
-      />
     </figure>
 
     <section class="sheet productions" id="producciones">
@@ -225,110 +276,129 @@ const strip = [
       </h2>
       <div class="mosaic">
         <img
-          src="/media/flamenco-poster.jpg"
-          width="1280"
-          height="864"
-          alt="Compañía de flamenco en un salón, con un telón de color detrás."
-          loading="lazy"
-        />
-        <img
-          src="/media/salon.jpg"
-          width="2200"
-          height="1464"
-          alt="Salón de celebración con lámparas de araña y copas."
-          loading="lazy"
-        />
-        <img
           src="/media/cuerdas.jpg"
           width="2200"
           height="1465"
           alt="Músicos de cuerda con vestuario de época."
           loading="lazy"
         />
+        <img
+          src="/media/crucero.jpg"
+          width="2200"
+          height="1464"
+          alt="Bailarina en un pasillo rojo, ante una pantalla de presentación."
+          loading="lazy"
+        />
+        <img
+          src="/media/conferencia.jpg"
+          width="2200"
+          height="1466"
+          alt="Presentación en un auditorio, con una gran pantalla detrás."
+          loading="lazy"
+        />
       </div>
     </section>
 
-    <section class="sheet worlds">
-      <div class="split">
-        <img
-          src="/media/palace.jpg"
-          width="2200"
-          height="1460"
-          alt="Vestíbulo de un hotel con un recibimiento de tocados y plumas."
-          loading="lazy"
-        />
-        <div>
-          <p class="eyebrow">A medida</p>
-          <h2 class="display">
-            <span>Lo que</span>
-            <span>no cabe</span>
-            <span>en un</span>
-            <span>formato</span>
-          </h2>
-          <p class="note">Se piensa desde cero.</p>
-        </div>
-      </div>
+    <section class="sheet" id="a-medida">
+      <p class="eyebrow">A medida</p>
+      <h2 class="display">
+        <span>Eventos</span>
+        <span>a medida</span>
+      </h2>
+      <p class="lede">¿Tienes una idea? Nosotros la hacemos realidad.</p>
+      <p class="lede quiet">
+        No trabajamos con fórmulas cerradas. Diseñamos propuestas artísticas a medida de cada evento,
+        espacio, público y objetivo.
+      </p>
+      <h3 class="display follow">
+        <span>Imagina.</span>
+      </h3>
+      <ul class="tiles concepts">
+        {
+          concepts.map((item) => (
+            <li>
+              <figure class="tile">
+                <img src={item.src} width="2200" height="1460" alt={item.alt} loading="lazy" />
+                <figcaption class="tile-copy">
+                  <span>{item.text}</span>
+                </figcaption>
+              </figure>
+            </li>
+          ))
+        }
+      </ul>
     </section>
 
     <section class="sheet inspire" id="inspirate">
       <h2 class="display center">
         <span>Inspírate</span>
       </h2>
-      <ul class="trio">
-        <li>
-          <img
-            src="/media/conjunto.jpg"
-            width="2200"
-            height="1650"
-            alt="Cortejo de flamenco y zancos en un jardín."
-            loading="lazy"
-          />
-          <p>Flamenco</p>
-        </li>
-        <li>
-          <img
-            src="/media/solista.jpg"
-            width="2200"
-            height="1467"
-            alt="Solista con vestido dorado en un club."
-            loading="lazy"
-          />
-          <p>En directo</p>
-        </li>
-        <li>
-          <img
-            src="/media/cuerdas.jpg"
-            width="2200"
-            height="1465"
-            alt="Músicos de cuerda en escena, con vestuario de época."
-            loading="lazy"
-          />
-          <p>En escena</p>
-        </li>
-      </ul>
+      <p class="micro">Revista visual. Imágenes y vídeos. Resumen de eventos.</p>
+      <div class="reel">
+        <ul class="reel-track" tabindex="0" aria-label="Imágenes para inspirarte">
+          <li>
+            <img src="/media/patio.jpg" width="2200" height="1650" alt="Cola roja sobre la piedra de un patio, a plena luz." loading="lazy" />
+          </li>
+          <li>
+            <img src="/media/abanicos.jpg" width="2200" height="1650" alt="Tres bailaoras con abanicos rojos en una escalera." loading="lazy" />
+          </li>
+          <li>
+            <img src="/media/tenor.jpg" width="2200" height="1467" alt="Cantante con esmoquin y pajarita, en un escenario." loading="lazy" />
+          </li>
+          <li>
+            <img src="/media/alas.jpg" width="2200" height="1465" alt="Alas de luz y un personaje en una presentación." loading="lazy" />
+          </li>
+        </ul>
+        <button class="reel-btn is-prev" type="button" data-reel-prev aria-label="Imagen anterior">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+        <button class="reel-btn is-next" type="button" data-reel-next aria-label="Imagen siguiente">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path d="M9.5 5.5 16 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </div>
     </section>
 
-    <figure class="bleed bleed-short">
-      <img
-        src="/media/patio.jpg"
-        width="2200"
-        height="1650"
-        alt="Cola roja sobre la piedra de un patio, a plena luz."
-        loading="lazy"
-      />
-    </figure>
+    <section class="sheet closer" id="contacto" aria-labelledby="contacto-titulo">
+      <p class="eyebrow center">Contacto</p>
+      <h2 id="contacto-titulo" class="display center">
+        <span>Cuéntanos qué</span>
+        <span>quieres hacer.</span>
+      </h2>
+      <p class="lede center">Nosotros pensamos cómo hacerlo.</p>
+      <ul class="paths">
+        {
+          paths.map((item, i) => (
+            <li>
+              <a class="tile path" href="#formulario" data-intent={item.text}>
+                <img src={item.src} width="2200" height="1460" alt="" loading="lazy" />
+                <span class="tile-copy">
+                  <span class="path-n">{String(i + 1).padStart(2, '0')}</span>
+                  <strong>{item.title}</strong>
+                  <span>{item.text}</span>
+                  <span class="path-go" aria-hidden="true">→</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a class="pill" href="#formulario">Hablemos de tu evento →</a>
+    </section>
 
-    <section class="sheet contact" id="contacto">
-      <p class="micro left">{subheadline} Cuéntanos qué tienes en mente.</p>
+    <section class="sheet contact" id="formulario">
       <div>
         <h2 class="display">
-          <span>¿Tienes</span>
-          <span>algo</span>
-          <span>en</span>
-          <span>mente?</span>
+          <span>Cuéntanos</span>
+          <span>tu evento</span>
         </h2>
-        <p class="talk">Hablemos.</p>
+        <p class="talk">Formulario evento</p>
         <form data-proposal action={mail} method="post">
+          <p class="eyebrow" data-intent-label hidden></p>
+          <input type="hidden" name="intencion" data-intent-field value="" />
           <label>
             Nombre
             <input name="nombre" type="text" autocomplete="name" required />
@@ -345,17 +415,15 @@ const strip = [
             Mensaje
             <textarea name="mensaje" rows="4" required></textarea>
           </label>
-          <button class="pill" type="submit">Enviar propuesta</button>
+          <button class="pill" type="submit">Cuéntanos tu evento</button>
         </form>
       </div>
     </section>
 
     <footer class="colophon">
-      <p class="lockup small">
-        <span>El</span>
-        <span>Efecto</span>
-        <span>Stendhal</span>
-      </p>
+      <a class="foot-logo" href="#inicio">
+        <img src="/brand/logo.png" width="937" height="542" alt="El Efecto Stendhal" />
+      </a>
       <a class="mail" href={mail}>{settings.data.email}</a>
       <p class="tag">{headline}</p>
       <p class="legal"><small>© {year} {settings.data.siteName}</small></p>
@@ -364,9 +432,108 @@ const strip = [
 </BaseLayout>
 
 <script>
-  const video = document.querySelector('video');
-  if (video && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    video.pause();
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const heroVideo = document.querySelector('[data-hero-video]');
+  const flamenco = document.querySelector('[data-flamenco]');
+
+  if (heroVideo instanceof HTMLVideoElement && reduce) heroVideo.pause();
+
+  if (flamenco instanceof HTMLVideoElement) {
+    if (reduce) {
+      flamenco.pause();
+    } else if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) flamenco.play();
+            else flamenco.pause();
+          });
+        },
+        { threshold: 0.35 },
+      );
+      observer.observe(flamenco);
+    }
+  }
+
+  document.querySelectorAll('[data-intent]').forEach((link) => {
+    link.addEventListener('click', () => {
+      const value = link.getAttribute('data-intent') ?? '';
+      const field = document.querySelector('[data-intent-field]');
+      const label = document.querySelector('[data-intent-label]');
+      if (field instanceof HTMLInputElement) field.value = value;
+      if (label instanceof HTMLElement) {
+        label.hidden = value.length === 0;
+        label.textContent = value;
+      }
+    });
+  });
+
+  const reel = document.querySelector('.reel-track');
+  const reelPrev = document.querySelector('[data-reel-prev]');
+  const reelNext = document.querySelector('[data-reel-next]');
+  if (reel instanceof HTMLElement && reelPrev instanceof HTMLButtonElement && reelNext instanceof HTMLButtonElement) {
+    const slides = [...reel.querySelectorAll(':scope > li')];
+    let index = 0;
+    let reelTimer = 0;
+    const readIndex = () => {
+      const origin = slides[0] instanceof HTMLElement ? slides[0].offsetLeft : 0;
+      let nearest = 0;
+      let best = Infinity;
+      slides.forEach((slide, i) => {
+        if (!(slide instanceof HTMLElement)) return;
+        const distance = Math.abs(slide.offsetLeft - origin - reel.scrollLeft);
+        if (distance < best) {
+          best = distance;
+          nearest = i;
+        }
+      });
+      index = nearest;
+    };
+    const go = (next) => {
+      if (!slides.length) return;
+      index = (next + slides.length) % slides.length;
+      const slide = slides[index];
+      const origin = slides[0];
+      if (!(slide instanceof HTMLElement) || !(origin instanceof HTMLElement)) return;
+      reel.scrollTo({
+        left: slide.offsetLeft - origin.offsetLeft,
+        behavior: reduce ? 'auto' : 'smooth',
+      });
+    };
+    const stopReel = () => window.clearInterval(reelTimer);
+    const startReel = () => {
+      stopReel();
+      if (document.hidden || slides.length < 2) return;
+      reelTimer = window.setInterval(() => go(index + 1), 3200);
+    };
+    reelPrev.addEventListener('click', () => {
+      go(index - 1);
+      startReel();
+    });
+    reelNext.addEventListener('click', () => {
+      go(index + 1);
+      startReel();
+    });
+    reel.addEventListener('scrollend', readIndex);
+    reel.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        go(index + 1);
+        startReel();
+      }
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        go(index - 1);
+        startReel();
+      }
+    });
+    reel.addEventListener('pointerdown', stopReel);
+    reel.addEventListener('pointerup', () => window.setTimeout(startReel, 2800));
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopReel();
+      else startReel();
+    });
+    startReel();
   }
 
   const form = document.querySelector('[data-proposal]');
@@ -378,8 +545,10 @@ const strip = [
       const email = String(data.get('email') ?? '').trim();
       const telefono = String(data.get('telefono') ?? '').trim();
       const mensaje = String(data.get('mensaje') ?? '').trim();
+      const intencion = String(data.get('intencion') ?? '').trim();
       const lines = [`Nombre: ${nombre}`, `Email: ${email}`];
       if (telefono) lines.push(`Teléfono: ${telefono}`);
+      if (intencion) lines.push(`Intención: ${intencion}`);
       lines.push('', mensaje);
       const body = lines.join('\n');
       const href = `mailto:eventos@elefectostendhal.com?subject=${encodeURIComponent('Propuesta')}&body=${encodeURIComponent(body)}`;
@@ -402,6 +571,45 @@ const strip = [
     color: #fff;
   }
 
+  .hero {
+    place-items: end start;
+    padding: 0 var(--spacing-gutter) clamp(1.75rem, 4vh, 2.75rem);
+  }
+
+  .hero-copy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+    max-width: min(42rem, 100%);
+    isolation: isolate;
+  }
+
+  .hero-copy::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -1rem -12% -1.25rem -8%;
+    background: radial-gradient(
+      ellipse at 12% 72%,
+      rgba(0, 0, 0, 0.78) 0%,
+      rgba(0, 0, 0, 0.4) 50%,
+      transparent 74%
+    );
+    pointer-events: none;
+  }
+
+  .hero-sub {
+    max-width: 28rem;
+    margin: 0;
+    color: #fff;
+    font-size: 1rem;
+    line-height: 1.5;
+    text-shadow: 0 1px 14px rgba(0, 0, 0, 0.85);
+  }
+
   .frame img,
   .frame video {
     position: absolute;
@@ -411,13 +619,60 @@ const strip = [
     object-fit: cover;
   }
 
-  .frame::after {
+  .hero video {
+    transform-origin: center;
+    animation: hero-drift 22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .sweep {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(
+      105deg,
+      transparent 42%,
+      rgba(255, 255, 255, 0.22) 50%,
+      transparent 58%
+    );
+    transform: translateX(-130%);
+    animation: sweep 1.7s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+  }
+
+  .frame::after,
+  .bleed::after,
+  .plate::before {
     content: '';
     position: absolute;
     inset: 0;
+    pointer-events: none;
     background:
-      linear-gradient(to bottom, rgba(0, 0, 0, 0.46), transparent 28%),
-      linear-gradient(to top, rgba(0, 0, 0, 0.38), transparent 42%);
+      linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.62) 16%, transparent 40%),
+      linear-gradient(to top, #000 0%, rgba(0, 0, 0, 0.82) 20%, transparent 54%);
+  }
+
+  .frame::after {
+    background:
+      linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.42) 12%, transparent 32%),
+      linear-gradient(to top, #000 0%, rgba(0, 0, 0, 0.55) 14%, transparent 40%);
+  }
+
+  .hero::after {
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.72) 0%,
+      rgba(0, 0, 0, 0.28) 18%,
+      transparent 42%
+    );
+  }
+
+  .frame::after {
+    z-index: 0;
+  }
+
+  .bleed::after,
+  .plate::before {
+    z-index: 1;
   }
 
   .lockup,
@@ -426,9 +681,9 @@ const strip = [
     position: relative;
     z-index: 1;
     margin: 0;
-    font-weight: 200;
-    letter-spacing: -0.02em;
-    line-height: 0.82;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    line-height: 1.14;
     text-transform: uppercase;
     text-wrap: unset;
   }
@@ -440,13 +695,54 @@ const strip = [
   }
 
   .lockup {
-    font-size: clamp(3.4rem, 7.3vw, 6.66rem);
+    font-family: "Instrument Serif", Palatino, "Palatino Linotype", Georgia, serif;
+    font-size: clamp(2.5rem, 1.15rem + 3.4vw, 4.6rem);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: 0;
     text-align: center;
+    text-transform: none;
+    text-shadow: 0 0.08em 0.28em rgba(0, 0, 0, 0.85);
+    isolation: isolate;
+  }
+
+  .lockup::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -18% -12%;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.62) 0%, transparent 72%);
+    pointer-events: none;
   }
 
   h1 {
-    font-size: clamp(3.5rem, 13.4vw, 12.35rem);
-    text-align: center;
+    font-size: clamp(1.7rem, 5.8vw, 5.6rem);
+    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: 0.04em;
+    text-align: left;
+    padding-inline: 0;
+    color: #fff;
+    text-shadow: 0 1px 18px rgba(0, 0, 0, 0.8);
+  }
+
+  h1 span {
+    white-space: nowrap;
+  }
+
+  .hero .hero-cta {
+    margin-top: 0.35rem;
+    padding: 1.05rem 1.85rem;
+    border-color: #fff;
+    background: #fff;
+    color: #0a0906;
+    font-size: 0.95rem;
+    letter-spacing: 0.16em;
+  }
+
+  .hero .hero-cta:hover {
+    background: transparent;
+    color: #fff;
   }
 
   .sheet {
@@ -485,8 +781,8 @@ const strip = [
     background: transparent;
     color: inherit;
     font: inherit;
-    font-size: 0.68rem;
-    letter-spacing: 0.18em;
+    font-size: var(--text-label);
+    letter-spacing: 0.12em;
     line-height: 1;
     text-decoration: none;
     text-transform: uppercase;
@@ -494,12 +790,12 @@ const strip = [
   }
 
   .micro {
-    max-width: 34rem;
+    max-width: 36rem;
     margin: clamp(2.5rem, 6vw, 4.5rem) auto 0;
-    color: rgba(255, 255, 255, 0.72);
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
-    line-height: 1.75;
+    color: var(--color-muted);
+    font-size: var(--text-label);
+    letter-spacing: 0.12em;
+    line-height: 1.7;
     text-align: center;
     text-transform: uppercase;
   }
@@ -537,7 +833,9 @@ const strip = [
   }
 
   .display {
-    font-size: clamp(2.8rem, 7.2vw, 6.6rem);
+    font-size: var(--text-display);
+    line-height: 1.16;
+    letter-spacing: 0.07em;
   }
 
   .aside {
@@ -557,9 +855,9 @@ const strip = [
 
   .eyebrow {
     margin: 0;
-    color: rgba(255, 255, 255, 0.62);
-    font-size: 0.68rem;
-    letter-spacing: 0.18em;
+    color: var(--color-muted);
+    font-size: var(--text-label);
+    letter-spacing: 0.14em;
     text-transform: uppercase;
   }
 
@@ -574,36 +872,71 @@ const strip = [
 
   .practices h2 {
     margin: 0.85rem 0 0.9rem;
-    font-weight: 200;
-    font-size: clamp(1.8rem, 2.9vw, 2.65rem);
-    letter-spacing: -0.03em;
-    line-height: 0.95;
+    font-weight: 400;
+    font-size: var(--text-title);
+    letter-spacing: 0.06em;
+    line-height: 1.2;
     text-transform: uppercase;
   }
 
   .practices p:last-child {
-    max-width: 28rem;
+    max-width: 32rem;
     margin: 0;
-    color: rgba(255, 255, 255, 0.54);
-    font-size: 0.95rem;
+    color: var(--color-muted);
+    font-size: 1rem;
+    line-height: 1.55;
   }
 
-  .marquee {
+  .logo-marquee {
     overflow: hidden;
-    padding-block: 0.4rem  clamp(4rem, 8vw, 6rem);
+    padding: clamp(2.5rem, 6vw, 4rem) 0 clamp(3.5rem, 8vw, 5.5rem);
+    mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
   }
 
-  .track {
+  .logo-marquee:focus-visible {
+    outline-offset: -6px;
+  }
+
+  .logos-label {
+    margin: 0 0 1.4rem;
+    padding-inline: var(--spacing-gutter);
+    text-align: center;
+  }
+
+  .logo-track {
     display: flex;
-    gap: 0.7rem;
     width: max-content;
-    animation: drift 90s linear infinite;
+    animation: drift 70s linear infinite;
   }
 
-  .track img {
-    width: min(46vw, 340px);
-    height: min(46vw, 340px);
-    object-fit: cover;
+  .logo-marquee:hover .logo-track,
+  .logo-marquee:focus-within .logo-track {
+    animation-play-state: paused;
+  }
+
+  .logo-set {
+    display: flex;
+    align-items: center;
+    gap: clamp(2.4rem, 5vw, 4.5rem);
+    margin: 0;
+    padding-inline: clamp(1.2rem, 2.5vw, 2.25rem);
+    list-style: none;
+  }
+
+  .logo-set li {
+    display: grid;
+    place-items: center;
+    width: clamp(6.5rem, 12vw, 9.5rem);
+    height: 3.25rem;
+  }
+
+  .logo-set img {
+    width: auto;
+    height: 1.65rem;
+    max-width: 8.5rem;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    opacity: 0.92;
   }
 
   @keyframes drift {
@@ -613,7 +946,14 @@ const strip = [
   }
 
   .bleed {
+    position: relative;
     margin: 0;
+  }
+
+  .video-bleed video {
+    width: 100%;
+    height: min(92vh, 820px);
+    object-fit: cover;
   }
 
   .bleed img {
@@ -626,6 +966,176 @@ const strip = [
   .bleed-short img {
     height: min(92vh, 820px);
     object-position: center 60%;
+  }
+
+  .instagram-band {
+    display: grid;
+    position: relative;
+    z-index: 1;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .instagram-band img {
+    grid-area: 1 / 1;
+    height: min(72vh, 680px);
+  }
+
+  .instagram-copy {
+    grid-area: 1 / 1;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 0.35rem;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.78) 0%, transparent 62%);
+  }
+
+  .instagram-copy .micro {
+    margin: 0;
+    color: #fff;
+    text-align: left;
+  }
+
+  .lede {
+    max-width: 40rem;
+    margin: 1.35rem 0 0;
+    font-size: 1.125rem;
+    line-height: 1.55;
+  }
+
+  .lede.quiet {
+    max-width: 38rem;
+    color: var(--color-muted);
+    font-size: 1rem;
+  }
+
+  .display.follow {
+    margin-top: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .tiles,
+  .paths {
+    display: grid;
+    gap: 0.7rem;
+    width: 100%;
+    margin: clamp(2rem, 5vw, 3.5rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tiles.acts,
+  .tiles.concepts {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .paths {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .tile {
+    position: relative;
+    display: grid;
+    min-height: 16rem;
+    overflow: hidden;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .closer {
+    display: grid;
+    justify-items: center;
+  }
+
+  .closer .lede {
+    margin-inline: auto;
+    color: var(--color-muted);
+  }
+
+  .closer .display {
+    margin-top: 1.1rem;
+  }
+
+  .paths .tile {
+    aspect-ratio: 4 / 5;
+    min-height: 0;
+  }
+
+  .paths .tile img {
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .paths .tile:hover img,
+  .paths .tile:focus-visible img {
+    transform: scale(1.04);
+  }
+
+  .paths .tile-copy {
+    padding: clamp(1.25rem, 2.4vw, 1.9rem);
+    background:
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.55) 0%, transparent 22%),
+      linear-gradient(to top, rgba(0, 0, 0, 0.86) 0%, rgba(0, 0, 0, 0.35) 48%, transparent 72%);
+  }
+
+  .path-n {
+    margin-bottom: auto;
+    color: #fff;
+    font-size: var(--text-label);
+    letter-spacing: 0.14em;
+  }
+
+  .paths .tile-copy .path-go {
+    margin-top: 0.6rem;
+    font-size: 1.1rem;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .paths .tile:hover .path-go,
+  .paths .tile:focus-visible .path-go {
+    transform: translateX(0.35rem);
+  }
+
+  .tile img,
+  .tile video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .tile-copy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    min-height: 100%;
+    padding: 1.15rem 1.25rem 1.25rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.78) 0%, transparent 62%);
+  }
+
+  .tile-copy strong {
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 0.9rem + 0.7vw, 1.6rem);
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    line-height: 1.15;
+    text-transform: uppercase;
+  }
+
+  .tile-copy span {
+    max-width: 26rem;
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .sheet > .pill {
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
   }
 
   .productions {
@@ -683,6 +1193,75 @@ const strip = [
     gap: clamp(2rem, 5vw, 3.5rem);
   }
 
+  .reel {
+    position: relative;
+    justify-self: center;
+    width: 100vw;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .reel-track {
+    display: flex;
+    gap: 0.7rem;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 0 var(--spacing-gutter);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--spacing-gutter);
+    list-style: none;
+    scrollbar-width: none;
+  }
+
+  .reel-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .reel-track:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+  }
+
+  .reel-track li {
+    flex: 0 0 min(78vw, 46rem);
+    scroll-snap-align: start;
+  }
+
+  .reel-track img {
+    display: block;
+    width: 100%;
+    height: min(72vh, 640px);
+    object-fit: cover;
+  }
+
+  .reel-btn {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    border-radius: 999px;
+    background: rgba(10, 9, 6, 0.55);
+    color: #fff;
+    line-height: 0;
+    transform: translateY(-50%);
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+  }
+
+  .reel-btn svg {
+    display: block;
+  }
+
+  .reel-btn.is-prev { left: calc(var(--spacing-gutter) + 0.35rem); }
+  .reel-btn.is-next { right: calc(var(--spacing-gutter) + 0.35rem); }
+
   .trio {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -701,8 +1280,9 @@ const strip = [
 
   .trio p {
     margin: 0.8rem 0 0;
-    font-size: 0.68rem;
-    letter-spacing: 0.18em;
+    color: var(--color-muted);
+    font-size: var(--text-label);
+    letter-spacing: 0.14em;
     text-transform: uppercase;
   }
 
@@ -715,9 +1295,9 @@ const strip = [
 
   .talk {
     margin: 1.25rem 0 0;
-    font-size: clamp(1.4rem, 2vw, 1.8rem);
-    font-weight: 200;
-    letter-spacing: -0.03em;
+    font-size: clamp(1.15rem, 1rem + 0.45vw, 1.4rem);
+    font-weight: 400;
+    letter-spacing: 0.04em;
   }
 
   form {
@@ -730,8 +1310,9 @@ const strip = [
   label {
     display: grid;
     gap: 0.35rem;
-    font-size: 0.68rem;
-    letter-spacing: 0.16em;
+    color: var(--color-muted);
+    font-size: var(--text-label);
+    letter-spacing: 0.12em;
     text-transform: uppercase;
   }
 
@@ -768,27 +1349,85 @@ const strip = [
     border-top: 1px solid rgba(255, 255, 255, 0.14);
   }
 
-  .lockup.small {
-    font-size: clamp(2rem, 3.4vw, 3.1rem);
-    text-align: left;
+  .foot-logo img {
+    display: block;
+    width: clamp(5rem, 11vw, 6.5rem);
+    height: auto;
   }
 
   .mail {
-    font-size: clamp(1.2rem, 2.4vw, 2rem);
-    font-weight: 200;
-    letter-spacing: -0.03em;
+    font-size: clamp(1rem, 0.9rem + 0.4vw, 1.2rem);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
     text-decoration: none;
   }
 
   .tag {
     margin: 0;
-    color: rgba(255, 255, 255, 0.72);
+    color: var(--color-muted);
   }
 
   .legal {
     grid-column: 1 / -1;
     margin: 0;
-    color: rgba(255, 255, 255, 0.46);
+    color: var(--color-muted);
+  }
+
+  .sheet,
+  .bleed,
+  .logo-marquee,
+  .wordmark .lockup {
+    animation: rise 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .hero h1 span {
+    animation: line-in 1.15s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .hero h1 span:nth-child(2) { animation-delay: 0.14s; }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(1.4rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes line-in {
+    from {
+      opacity: 0;
+      transform: translateY(80%) skewY(4deg);
+      filter: blur(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+  }
+
+  @keyframes hero-drift {
+    from { transform: scale(1.14); }
+    to { transform: scale(1); }
+  }
+
+  @keyframes sweep {
+    to { transform: translateX(130%); }
+  }
+
+  @supports (animation-timeline: view()) {
+    .sheet,
+    .bleed,
+    .logo-marquee,
+    .wordmark .lockup {
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
   }
 
   @media (max-width: 860px) {
@@ -797,7 +1436,11 @@ const strip = [
     .contact,
     .colophon,
     .trio,
-    .mosaic {
+    .mosaic,
+    .tiles,
+    .tiles.acts,
+    .tiles.concepts,
+    .paths {
       grid-template-columns: 1fr;
     }
 
@@ -812,11 +1455,26 @@ const strip = [
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .track {
+    .logo-track,
+    .sheet,
+    .bleed,
+    .logo-marquee,
+    .wordmark .lockup,
+    .hero h1 span,
+    .hero video,
+    .sweep,
+    .is-open nav a {
       animation: none;
+    }
+
+    .logo-track {
       flex-wrap: wrap;
       width: auto;
       padding-inline: var(--spacing-gutter);
+    }
+
+    .logo-set.is-clone {
+      display: none;
     }
   }
 </style>

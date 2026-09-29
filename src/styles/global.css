@@ -1,12 +1,26 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("../assets/fonts/instrument-serif-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme inline {
-  --font-sans: "Helvetica Neue LT Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-sans: "Neue Haas Grotesk Text Pro", "Neue Haas Grotesk Text", "Neue Haas Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: "Neue Haas Grotesk Display Pro", "Neue Haas Grotesk Display", "Neue Haas Grotesk Text Pro", "Neue Haas Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --color-canvas: #0a0906;
   --color-ink: #ffffff;
-  --color-muted: #cfc8bc;
-  --color-line: color-mix(in srgb, var(--color-ink) 16%, transparent);
-  --color-focus: #f3f0e8;
+  --color-muted: #d6d2cb;
+  --color-line: color-mix(in srgb, var(--color-ink) 22%, transparent);
+  --color-focus: #ffffff;
+  --text-body: 1rem;
+  --text-label: 0.75rem;
+  --text-title: clamp(1.25rem, 0.95rem + 0.9vw, 1.7rem);
+  --text-display: clamp(1.85rem, 1.05rem + 2.2vw, 3.35rem);
+  --text-hero: clamp(1.85rem, 7.4vw, 7.25rem);
   --spacing-gutter: clamp(1.25rem, 4vw, 2.75rem);
   --radius-sm: 0;
 }
@@ -40,8 +54,8 @@
     margin: 0;
     font-family: var(--font-sans);
     font-weight: 400;
-    font-size: 1.0625rem;
-    line-height: 1.5;
+    font-size: var(--text-body);
+    line-height: 1.55;
     letter-spacing: 0.005em;
     background: var(--color-canvas);
     color: var(--color-ink);
@@ -80,17 +94,17 @@
   }
 
   :focus-visible {
-    outline: 1px solid var(--color-focus);
-    outline-offset: 4px;
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
   }
 
   h1,
   h2,
   h3 {
-    font-family: var(--font-sans);
+    font-family: var(--font-display);
     font-weight: 400;
-    letter-spacing: -0.034em;
-    line-height: 0.94;
+    letter-spacing: 0.035em;
+    line-height: 1.12;
     text-wrap: balance;
   }
 
