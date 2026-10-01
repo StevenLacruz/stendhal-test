@@ -29,16 +29,63 @@ const hrefFor = (id: string) => (onHome ? `#${id}` : `/#${id}`);
     </a>
     <a class="mast-mail tap-target" href={`mailto:${settings.data.email}`}>{settings.data.email}</a>
   </div>
-  <button
-    class="menu-toggle tap-target"
-    type="button"
-    aria-expanded="false"
-    aria-controls="navegacion"
-    data-menu-toggle
-  >
-    <span class="label-open">Menú</span>
-    <span class="label-close">Cerrar</span>
-  </button>
+  <div class="mast-actions">
+    {
+      onHome && (
+        <button
+          class="audio-toggle is-live tap-target"
+          type="button"
+          data-sound
+          aria-label="Silenciar"
+          aria-pressed="true"
+        >
+          <span class="audio-toggle__dot" aria-hidden="true"></span>
+          <span class="audio-toggle__label" data-sound-label>Sonido activo</span>
+          <svg class="audio-toggle__icon audio-toggle__icon--off" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M11 5 6 9H3v6h3l5 4V5Z"></path>
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              d="m22 9-6 6M16 9l6 6"></path>
+          </svg>
+          <svg class="audio-toggle__icon audio-toggle__icon--on" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M11 5 6 9H3v6h3l5 4V5Z"></path>
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              d="M15.5 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"></path>
+          </svg>
+        </button>
+      )
+    }
+    {onHome && <span class="mast-rule" aria-hidden="true"></span>}
+    <button
+      class="menu-toggle tap-target"
+      type="button"
+      aria-expanded="false"
+      aria-controls="navegacion"
+      data-menu-toggle
+    >
+      <span class="label-open">Menú</span>
+      <span class="label-close">Cerrar</span>
+    </button>
+  </div>
   <nav id="navegacion" aria-label="Navegación principal" data-menu-panel>
     <ul>
       {
@@ -88,6 +135,82 @@ const hrefFor = (id: string) => (onHome ? `#${id}` : `/#${id}`);
 
     syncSolid();
     document.addEventListener('scroll', syncSolid, { passive: true });
+  }
+
+  const video = document.querySelector('[data-hero-video]');
+  const soundBtn = document.querySelector('[data-sound]');
+  const soundLabel = document.querySelector('[data-sound-label]');
+
+  if (video instanceof HTMLVideoElement && soundBtn instanceof HTMLButtonElement) {
+    let wantsSound = true;
+
+    const syncSoundUi = () => {
+      soundBtn.classList.toggle('is-live', wantsSound);
+      soundBtn.setAttribute('aria-pressed', String(wantsSound));
+      soundBtn.setAttribute('aria-label', wantsSound ? 'Silenciar' : 'Activar sonido');
+      if (soundLabel) soundLabel.textContent = wantsSound ? 'Sonido activo' : 'Audio';
+    };
+
+    const setMuted = (muted: boolean) => {
+      video.muted = muted;
+      video.defaultMuted = muted;
+      if (muted) video.setAttribute('muted', '');
+      else {
+        video.removeAttribute('muted');
+        video.volume = 1;
+      }
+      syncSoundUi();
+    };
+
+    const tryPlay = async () => {
+      if (wantsSound) {
+        setMuted(false);
+        try {
+          await video.play();
+          return;
+        } catch {
+          /* El navegador bloquea el audio automático: el vídeo sigue y el sonido entra con el primer gesto. */
+        }
+      }
+
+      setMuted(true);
+      try {
+        await video.play();
+      } catch {
+        /* Autoplay bloqueado. */
+      }
+    };
+
+    const unlockSound = () => {
+      if (!wantsSound || !video.muted) return;
+      setMuted(false);
+      void video.play();
+    };
+
+    video.volume = 1;
+    setMuted(!wantsSound);
+    void tryPlay();
+
+    const unlockEvents = ['pointerdown', 'keydown', 'touchstart'] as const;
+    const onFirstGesture = () => {
+      unlockSound();
+      unlockEvents.forEach((type) => {
+        window.removeEventListener(type, onFirstGesture, true);
+      });
+    };
+    unlockEvents.forEach((type) => {
+      window.addEventListener(type, onFirstGesture, { capture: true });
+    });
+
+    soundBtn.addEventListener('click', (event) => {
+      event.stopPropagation();
+      wantsSound = !wantsSound;
+      setMuted(!wantsSound);
+      if (wantsSound) void video.play();
+    });
+
+    video.addEventListener('volumechange', syncSoundUi);
+    syncSoundUi();
   }
 </script>
 
@@ -163,9 +286,21 @@ const hrefFor = (id: string) => (onHome ? `#${id}` : `/#${id}`);
     text-transform: uppercase;
   }
 
-  .menu-toggle {
+  .mast-actions {
     position: relative;
     z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: clamp(0.85rem, 2vw, 1.15rem);
+  }
+
+  .mast-rule {
+    width: 1px;
+    height: 0.9rem;
+    background: rgba(255, 255, 255, 0.45);
+  }
+
+  .menu-toggle {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -175,6 +310,86 @@ const hrefFor = (id: string) => (onHome ? `#${id}` : `/#${id}`);
     color: inherit;
     font-family: inherit;
     cursor: pointer;
+  }
+
+  .audio-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-muted);
+    font-family: inherit;
+    font-size: var(--text-label);
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    line-height: 1;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .audio-toggle:hover,
+  .audio-toggle:focus-visible,
+  .audio-toggle.is-live {
+    color: #fff;
+  }
+
+  .audio-toggle__dot {
+    position: relative;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .audio-toggle__dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0;
+  }
+
+  .audio-toggle.is-live .audio-toggle__dot::after {
+    animation: ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  .audio-toggle__label {
+    display: none;
+  }
+
+  .audio-toggle__icon {
+    display: none;
+    width: 14px;
+    height: 14px;
+  }
+
+  .audio-toggle:not(.is-live) .audio-toggle__icon--off,
+  .audio-toggle.is-live .audio-toggle__icon--on {
+    display: block;
+  }
+
+  @keyframes ping {
+    75%,
+    100% {
+      transform: scale(2.4);
+      opacity: 0;
+    }
+  }
+
+  @media (min-width: 720px) {
+    .audio-toggle__label {
+      display: inline;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .audio-toggle.is-live .audio-toggle__dot::after {
+      animation: none;
+    }
   }
 
   .label-close {

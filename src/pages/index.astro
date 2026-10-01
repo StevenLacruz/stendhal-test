@@ -436,7 +436,24 @@ const logos = [
   const heroVideo = document.querySelector('[data-hero-video]');
   const flamenco = document.querySelector('[data-flamenco]');
 
-  if (heroVideo instanceof HTMLVideoElement && reduce) heroVideo.pause();
+  if (heroVideo instanceof HTMLVideoElement) {
+    if (reduce) {
+      heroVideo.pause();
+    } else {
+      if ('IntersectionObserver' in window) {
+        const heroObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) heroVideo.play();
+              else heroVideo.pause();
+            });
+          },
+          { threshold: 0.35 },
+        );
+        heroObserver.observe(heroVideo);
+      }
+    }
+  }
 
   if (flamenco instanceof HTMLVideoElement) {
     if (reduce) {
