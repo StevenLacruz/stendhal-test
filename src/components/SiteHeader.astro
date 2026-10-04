@@ -412,6 +412,8 @@ const hrefFor = (id: string) => (onHome ? `#${id}` : `/#${id}`);
     align-items: flex-start;
     padding: 18vh var(--spacing-gutter) max(2.5rem, env(safe-area-inset-bottom));
     background: var(--color-canvas);
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .is-open nav {
@@ -470,6 +472,22 @@ const hrefFor = (id: string) => (onHome ? `#${id}` : `/#${id}`);
   @media (max-width: 720px) {
     .mast-mail {
       display: none;
+    }
+  }
+
+  @media (max-height: 740px) {
+    nav {
+      padding-top: 5rem;
+      padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+    }
+
+    nav a {
+      min-height: 2.35rem;
+      font-size: 1.3rem;
+    }
+
+    ul {
+      gap: 0.15rem;
     }
   }
 </style>
