@@ -36,36 +36,42 @@ const artists = [
     text: 'Bandas · DJs · cantantes · orquestas · músicos',
     src: '/media/cantante.jpg',
     alt: 'Cantante con vestido de flecos dorados, en un escenario.',
+    href: '/menu/musica-bandas-solistas',
   },
   {
     title: 'Dance',
     text: 'Flamenco · urbano · contemporáneo · coreografías',
     src: '/media/conjunto.jpg',
     alt: 'Cortejo de flamenco y zancos en un jardín.',
+    href: '/menu/espana-flamenco-y-ole',
   },
   {
     title: 'Show',
     text: 'Performances · acrobacia · magia · humor · circo',
     src: '/media/casa.jpg',
     alt: 'Tres performers bajo un neón rosa, en un escenario.',
+    href: '/menu/espectaculos-tematicos',
   },
   {
     title: 'Visual',
     text: 'LED · mapping · audiovisuales · iluminación',
     src: '/media/banda.jpg',
     alt: 'Banda en directo frente a una pantalla de escenario.',
+    href: '/menu/espectaculos-tecnologicos',
   },
   {
     title: 'Talent',
     text: 'Presentadores · artistas · celebrities · influencers',
     src: '/media/mascaras.jpg',
     alt: 'Tres personajes de cine en una entrega de premios.',
+    href: '/menu/presentaciones',
   },
   {
     title: 'Immersive',
     text: 'Experiencias diseñadas específicamente para cada evento',
     src: '/media/zancos.jpg',
     alt: 'Artista sobre zancos, con traje lila, brindando.',
+    href: '/menu/performances-tematicos',
   },
 ];
 
@@ -193,7 +199,7 @@ const logos = [
         {
           artists.map((item) => (
             <li>
-              <a class="tile" href="#formulario" data-intent={item.title}>
+              <a class="tile" href={item.href}>
                 <img src={item.src} width="2200" height="1460" alt={item.alt} />
                 <span class="tile-copy">
                   <strong>{item.title}</strong>
@@ -204,7 +210,7 @@ const logos = [
           ))
         }
       </ul>
-      <a class="pill" href="#inspirate">Descubrir todas las posibilidades →</a>
+      <a class="pill" href="/menu">Descubrir todas las posibilidades →</a>
     </section>
 
     <section class="logo-marquee" aria-label="Empresas que confían en nosotros" tabindex="0">

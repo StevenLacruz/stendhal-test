@@ -1,0 +1,237 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { menuHref, menuIndexSeo, menuSections } from '../../data/menu';
+---
+
+<BaseLayout
+  title={menuIndexSeo.title}
+  description={menuIndexSeo.description}
+  path="/menu"
+  overlay
+>
+  <main id="contenido">
+    <div class="catalog" data-catalog>
+      <div class="stage" aria-hidden="true">
+        {
+          menuSections.map((section, index) => (
+            <img
+              class:list={['stage-photo', index === 0 && 'is-active']}
+              data-stage={section.slug}
+              src={section.image.src}
+              width={section.image.width}
+              height={section.image.height}
+              alt=""
+              decoding="async"
+            />
+          ))
+        }
+      </div>
+      <div class="catalog-copy">
+        <h1>Menú</h1>
+        <nav aria-label="Secciones del menú">
+          <ol>
+            {
+              menuSections.map((section, index) => (
+                <li data-section={section.slug} class:list={[index === 0 && 'is-active']}>
+                  <a class="section-link" href={menuHref(section.slug)}>
+                    {section.title}
+                  </a>
+                  <ul>
+                    {section.acts.map((act) => (
+                      <li>
+                        <a class="act-link" href={`${menuHref(section.slug)}#${act.id}`}>
+                          {act.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))
+            }
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  const root = document.querySelector('[data-catalog]');
+
+  if (root instanceof HTMLElement) {
+    const items = [...root.querySelectorAll<HTMLElement>('[data-section]')];
+    const photos = [...root.querySelectorAll<HTMLElement>('[data-stage]')];
+
+    const setActive = (slug: string) => {
+      for (const item of items) {
+        item.classList.toggle('is-active', item.dataset.section === slug);
+      }
+      for (const photo of photos) {
+        photo.classList.toggle('is-active', photo.dataset.stage === slug);
+      }
+    };
+
+    root.addEventListener('pointerover', (event) => {
+      if (!(event.target instanceof Element)) return;
+      const item = event.target.closest<HTMLElement>('[data-section]');
+      if (item?.dataset.section) setActive(item.dataset.section);
+    });
+
+    root.addEventListener('focusin', (event) => {
+      if (!(event.target instanceof Element)) return;
+      const item = event.target.closest<HTMLElement>('[data-section]');
+      if (item?.dataset.section) setActive(item.dataset.section);
+    });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        const slug = visible?.target instanceof HTMLElement ? visible.target.dataset.section : undefined;
+        if (slug) setActive(slug);
+      },
+      { rootMargin: '-35% 0px -45% 0px', threshold: [0.2, 0.6] },
+    );
+
+    for (const item of items) observer.observe(item);
+  }
+</script>
+
+<style>
+  .catalog {
+    position: relative;
+    min-height: 100dvh;
+  }
+
+  .stage {
+    position: sticky;
+    top: 0;
+    z-index: 0;
+    height: 100dvh;
+    margin-bottom: -100dvh;
+    overflow: hidden;
+    pointer-events: none;
+    background: #000;
+  }
+
+  .stage::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.86) 0%,
+      rgba(0, 0, 0, 0.62) 38%,
+      rgba(0, 0, 0, 0.18) 68%,
+      rgba(0, 0, 0, 0.38) 100%
+    );
+  }
+
+  .stage-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .stage-photo.is-active {
+    opacity: 1;
+  }
+
+  .catalog-copy {
+    position: relative;
+    z-index: 1;
+    width: min(44rem, 100%);
+    padding: clamp(6.25rem, 14vh, 8rem) var(--spacing-gutter) clamp(4rem, 12vh, 7rem);
+  }
+
+  h1 {
+    margin: 0 0 clamp(1.75rem, 4vh, 2.75rem);
+    font-size: clamp(2.6rem, 6vw, 5.5rem);
+    letter-spacing: 0.08em;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  h1::after {
+    content: '';
+    display: block;
+    width: 4.75rem;
+    height: 1px;
+    margin-top: 1.1rem;
+    background: rgba(255, 255, 255, 0.75);
+  }
+
+  ol,
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  ol > li + li {
+    margin-top: 0.85rem;
+  }
+
+  .section-link,
+  .act-link {
+    text-decoration: none;
+  }
+
+  .section-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-family: var(--font-display);
+    font-size: clamp(1.28rem, 2.15vw, 1.85rem);
+    letter-spacing: 0.07em;
+    line-height: 1.15;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.62);
+  }
+
+  li.is-active .section-link,
+  .section-link:hover,
+  .section-link:focus-visible {
+    color: #fff;
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.05rem;
+    margin: 0.15rem 0 0.35rem;
+  }
+
+  .act-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    line-height: 1.3;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .act-link:hover,
+  .act-link:focus-visible {
+    color: #fff;
+  }
+
+  @media (max-width: 720px) {
+    .stage::after {
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.72) 46%, rgba(0, 0, 0, 0.42) 100%);
+    }
+
+    .catalog-copy {
+      width: 100%;
+    }
+  }
+</style>

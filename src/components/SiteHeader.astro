@@ -1,5 +1,6 @@
 ---
 import { getSettings } from '../lib/content';
+import { menuHref, menuSections } from '../data/menu';
 
 interface Props {
   currentPath: string;
@@ -7,19 +8,18 @@ interface Props {
 
 const { currentPath } = Astro.props;
 const settings = await getSettings();
-const onHome = currentPath === '/';
+const path = currentPath.length > 1 ? currentPath.replace(/\/$/, '') : currentPath;
+const onHome = path === '/';
 
 const links = [
-  { id: 'inicio', label: 'Inicio' },
-  { id: 'sobre', label: 'Sobre nosotros' },
-  { id: 'artistas', label: 'Artistas' },
-  { id: 'producciones', label: 'Producciones' },
-  { id: 'a-medida', label: 'A medida' },
-  { id: 'inspirate', label: 'Inspírate' },
-  { id: 'contacto', label: 'Contacto' },
+  { href: '/', label: 'Inicio', current: onHome },
+  ...menuSections.map((section) => ({
+    href: menuHref(section.slug),
+    label: section.title,
+    current: path === menuHref(section.slug),
+  })),
+  { href: '/#contacto', label: 'Contacto', current: false },
 ];
-
-const hrefFor = (id: string) => (onHome ? `#${id}` : `/#${id}`);
 ---
 
 <header class="masthead" data-masthead>
@@ -91,11 +91,7 @@ const hrefFor = (id: string) => (onHome ? `#${id}` : `/#${id}`);
       {
         links.map((link) => (
           <li>
-            <a
-              class="tap-target"
-              href={hrefFor(link.id)}
-              aria-current={link.id === 'inicio' && onHome ? 'page' : undefined}
-            >
+            <a class="tap-target" href={link.href} aria-current={link.current ? 'page' : undefined}>
               {link.label}
             </a>
           </li>
@@ -122,7 +118,9 @@ const hrefFor = (id: string) => (onHome ? `#${id}` : `/#${id}`);
     });
 
     panel.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => setOpen(false));
+      link.addEventListener('click', () => {
+        window.setTimeout(() => setOpen(false), 0);
+      });
     });
 
     document.addEventListener('keydown', (event) => {
@@ -410,7 +408,7 @@ const hrefFor = (id: string) => (onHome ? `#${id}` : `/#${id}`);
     z-index: 1;
     display: none;
     align-items: flex-start;
-    padding: 18vh var(--spacing-gutter) max(2.5rem, env(safe-area-inset-bottom));
+    padding: clamp(5.25rem, 12vh, 7.5rem) var(--spacing-gutter) max(2.5rem, env(safe-area-inset-bottom));
     background: var(--color-canvas);
     overflow-y: auto;
     overscroll-behavior: contain;
@@ -435,7 +433,7 @@ const hrefFor = (id: string) => (onHome ? `#${id}` : `/#${id}`);
     align-items: center;
     min-height: 44px;
     font-family: var(--font-display);
-    font-size: clamp(1.45rem, 2.8vw, 2.15rem);
+    font-size: clamp(1.12rem, 2.05vw, 1.62rem);
     font-weight: 400;
     letter-spacing: 0.08em;
     line-height: 1.2;
@@ -452,6 +450,8 @@ const hrefFor = (id: string) => (onHome ? `#${id}` : `/#${id}`);
   .is-open nav li:nth-child(5) a { animation-delay: 0.16s; }
   .is-open nav li:nth-child(6) a { animation-delay: 0.2s; }
   .is-open nav li:nth-child(7) a { animation-delay: 0.24s; }
+  .is-open nav li:nth-child(8) a { animation-delay: 0.28s; }
+  .is-open nav li:nth-child(9) a { animation-delay: 0.32s; }
 
   @keyframes nav-in {
     from {
