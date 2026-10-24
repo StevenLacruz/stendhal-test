@@ -230,24 +230,32 @@ const logos = [
       </div>
     </section>
 
-    <a
-      class="bleed instagram-band"
-      href={instagram?.href ?? 'https://www.instagram.com/elefectostendhal'}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <img
-        src="/media/farol.jpg"
-        width="2200"
-        height="1467"
-        alt=""
-        loading="lazy"
-      />
-      <span class="instagram-copy">
-        <span class="display"><span>Instagram</span></span>
-        <span class="micro">Síguenos</span>
-      </span>
-    </a>
+    <section class="sheet instagram-feed" aria-labelledby="instagram-title">
+      <div class="instagram-intro">
+        <p class="micro">En directo desde Instagram</p>
+        <h2 class="display" id="instagram-title">
+          <span>Lo último</span>
+          <span>que ha sucedido</span>
+        </h2>
+        <a
+          class="instagram-link"
+          href={instagram?.href ?? 'https://www.instagram.com/elefectostendhal'}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span>@elefectostendhal</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+      <div class="instagram-embed">
+        <iframe
+          src={`${instagram?.href ?? 'https://www.instagram.com/elefectostendhal'}/embed/`}
+          title="Últimas publicaciones de El Efecto Stendhal en Instagram"
+          loading="lazy"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </section>
 
     <section class="sheet" id="sobre">
       <h2 class="display">
@@ -396,34 +404,35 @@ const logos = [
     </section>
 
     <section class="sheet contact" id="formulario">
-      <div>
+      <div class="contact-intro">
         <h2 class="display">
           <span>Cuéntanos</span>
           <span>tu evento</span>
         </h2>
-        <p class="talk">Formulario evento</p>
-        <form data-proposal action={mail} method="post">
-          <p class="eyebrow" data-intent-label hidden></p>
-          <input type="hidden" name="intencion" data-intent-field value="" />
-          <label>
-            Nombre
-            <input name="nombre" type="text" autocomplete="name" required />
-          </label>
-          <label>
-            Email
-            <input name="email" type="email" autocomplete="email" required />
-          </label>
-          <label>
-            Teléfono
-            <input name="telefono" type="tel" autocomplete="tel" />
-          </label>
-          <label>
-            Mensaje
-            <textarea name="mensaje" rows="4" required></textarea>
-          </label>
-          <button class="pill" type="submit">Cuéntanos tu evento</button>
-        </form>
+        <p class="talk">Cuéntanos lo esencial. Nosotros pensamos cómo hacerlo realidad.</p>
+        <a class="contact-mail" href={mail}>{settings.data.email}</a>
       </div>
+      <form data-proposal action={mail} method="post">
+        <p class="eyebrow" data-intent-label hidden></p>
+        <input type="hidden" name="intencion" data-intent-field value="" />
+        <label>
+          Nombre
+          <input name="nombre" type="text" autocomplete="name" required />
+        </label>
+        <label>
+          Email
+          <input name="email" type="email" autocomplete="email" required />
+        </label>
+        <label>
+          Teléfono
+          <input name="telefono" type="tel" autocomplete="tel" />
+        </label>
+        <label>
+          Mensaje
+          <textarea name="mensaje" rows="4" required></textarea>
+        </label>
+        <button class="pill" type="submit">Cuéntanos tu evento</button>
+      </form>
     </section>
 
     <footer class="colophon">
@@ -991,36 +1000,97 @@ const logos = [
     object-position: center 60%;
   }
 
-  .instagram-band {
+  .instagram-feed {
     display: grid;
-    position: relative;
-    z-index: 1;
-    color: #fff;
-    text-decoration: none;
-    cursor: pointer;
+    grid-template-columns: minmax(14rem, 0.72fr) minmax(20rem, 1.28fr);
+    gap: clamp(3rem, 8vw, 8rem);
+    align-items: start;
+    border-block: 1px solid rgba(255, 255, 255, 0.14);
   }
 
-  .instagram-band img {
-    grid-area: 1 / 1;
-    height: min(72vh, 680px);
+  .instagram-intro {
+    display: grid;
+    gap: clamp(1.25rem, 2.5vw, 2rem);
+    align-content: start;
+    min-width: 0;
   }
 
-  .instagram-copy {
-    grid-area: 1 / 1;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-end;
-    gap: 0.35rem;
-    padding: clamp(1.5rem, 4vw, 3rem);
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.78) 0%, transparent 62%);
-  }
-
-  .instagram-copy .micro {
+  .instagram-intro .micro {
     margin: 0;
-    color: #fff;
     text-align: left;
+  }
+
+  .instagram-link {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    width: min(100%, 24rem);
+    padding: 0.85rem 0;
+    border-block: 1px solid rgba(255, 255, 255, 0.28);
+    color: #fff;
+    font-size: var(--text-label);
+    letter-spacing: 0.12em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .instagram-link span:last-child {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .instagram-link:hover span:last-child,
+  .instagram-link:focus-visible span:last-child {
+    transform: translate(0.2rem, -0.2rem);
+  }
+
+  .instagram-embed {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: #0a0a0a;
+  }
+
+  .instagram-embed iframe {
+    position: absolute;
+    top: -158px;
+    left: 0;
+    width: 100%;
+    height: calc(100% + 158px);
+    border: 0;
+    background: #0a0a0a;
+    filter: saturate(0.82) contrast(1.06);
+    animation: instagram-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+    transition: filter 0.5s ease;
+  }
+
+  .instagram-embed:hover iframe,
+  .instagram-embed:focus-within iframe {
+    filter: saturate(1) contrast(1);
+  }
+
+  .instagram-embed::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 0.75rem;
+    background: #0a0a0a;
+    pointer-events: none;
+  }
+
+  @keyframes instagram-in {
+    from {
+      opacity: 0;
+      filter: saturate(0.82) contrast(1.06) blur(8px);
+    }
+    to {
+      opacity: 1;
+      filter: saturate(0.82) contrast(1.06) blur(0);
+    }
   }
 
   .lede {
@@ -1312,23 +1382,42 @@ const logos = [
 
   .contact {
     display: grid;
-    grid-template-columns: minmax(12rem, 0.7fr) 1.3fr;
-    gap: clamp(2rem, 6vw, 5rem);
+    grid-template-columns: minmax(18rem, 0.8fr) minmax(26rem, 1.2fr);
+    gap: clamp(3rem, 9vw, 9rem);
     align-items: start;
   }
 
+  .contact-intro {
+    position: sticky;
+    top: clamp(7rem, 12vh, 9rem);
+  }
+
   .talk {
-    margin: 1.25rem 0 0;
+    max-width: 29rem;
+    margin: 1.5rem 0 0;
     font-size: clamp(1.15rem, 1rem + 0.45vw, 1.4rem);
     font-weight: 400;
     letter-spacing: 0.04em;
+    line-height: 1.5;
+  }
+
+  .contact-mail {
+    display: inline-block;
+    margin-top: 1.4rem;
+    color: var(--color-muted);
+    font-size: var(--text-label);
+    letter-spacing: 0.12em;
+    text-decoration-color: rgba(255, 255, 255, 0.4);
+    text-underline-offset: 0.35em;
+    text-transform: uppercase;
   }
 
   form {
     display: grid;
     gap: 1.35rem;
-    max-width: 36rem;
-    margin-top: clamp(2rem, 4vw, 3rem);
+    width: 100%;
+    max-width: 48rem;
+    justify-self: end;
   }
 
   label {
@@ -1473,6 +1562,19 @@ const logos = [
       grid-template-columns: 1fr;
     }
 
+    .instagram-feed {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
+    .contact-intro {
+      position: static;
+    }
+
+    form {
+      max-width: none;
+    }
+
     .mosaic img:first-child {
       grid-row: auto;
       min-height: 18rem;
@@ -1492,6 +1594,7 @@ const logos = [
     .hero h1 span,
     .hero video,
     .sweep,
+    .instagram-embed iframe,
     .is-open nav a {
       animation: none;
     }
