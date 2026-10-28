@@ -34,36 +34,36 @@ const artists = [
   {
     title: 'Music',
     text: 'Bandas · DJs · cantantes · orquestas · músicos',
-    src: '/media/cantante.jpg',
-    alt: 'Cantante con vestido de flecos dorados, en un escenario.',
+    src: '/media/menu/banda-stendhal.jpg',
+    alt: 'Cantante de la Banda Efecto Stendhal durante una actuación.',
     href: '/menu/musica-bandas-solistas',
   },
   {
     title: 'Dance',
     text: 'Flamenco · urbano · contemporáneo · coreografías',
-    src: '/media/conjunto.jpg',
-    alt: 'Cortejo de flamenco y zancos en un jardín.',
+    src: '/media/escalinata.jpg',
+    alt: 'Bailarina de flamenco con vestido rojo y abanico en una escalinata.',
     href: '/menu/espana-flamenco-y-ole',
   },
   {
     title: 'Show',
     text: 'Performances · acrobacia · magia · humor · circo',
-    src: '/media/casa.jpg',
-    alt: 'Tres performers bajo un neón rosa, en un escenario.',
+    src: '/media/menu/tematicos.jpg',
+    alt: 'Elenco de un espectáculo temático en una noche de premios.',
     href: '/menu/espectaculos-tematicos',
   },
   {
     title: 'Visual',
     text: 'LED · mapping · audiovisuales · iluminación',
-    src: '/media/banda.jpg',
-    alt: 'Banda en directo frente a una pantalla de escenario.',
+    src: '/media/menu/led-bailarines.jpg',
+    alt: 'Bailarines con vestuario y alas iluminadas con tecnología LED.',
     href: '/menu/espectaculos-tecnologicos',
   },
   {
     title: 'Talent',
     text: 'Presentadores · artistas · celebrities · influencers',
-    src: '/media/mascaras.jpg',
-    alt: 'Tres personajes de cine en una entrega de premios.',
+    src: '/media/menu/bridgerton.jpg',
+    alt: 'Elenco de Los Bridgerton durante una presentación.',
     href: '/menu/presentaciones',
   },
   {
@@ -157,12 +157,13 @@ const logos = [
         muted
         loop
         playsinline
-        poster="/media/showreel-poster.jpg"
+        poster="/media/cantante.jpg"
         width="1920"
         height="1080"
         data-hero-video
+        data-start-at="5.5"
       >
-        <source src="/media/showreel.mp4" type="video/mp4" />
+        <source src="/media/showreel.mp4#t=5.5" type="video/mp4" />
       </video>
       <div class="hero-copy">
         <h1>
