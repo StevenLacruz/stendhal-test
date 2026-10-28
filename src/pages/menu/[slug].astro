@@ -2,7 +2,7 @@
 export const prerender = true;
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { menuHref, menuSections, type MenuImage } from '../../data/menu';
+import { menuHref, menuSections } from '../../data/menu';
 
 export function getStaticPaths() {
   return menuSections.map((section, index) => ({
@@ -22,118 +22,6 @@ const next = menuSections[(index + 1) % menuSections.length];
 if (!section || !next) {
   throw new Error('Sección de menú sin datos.');
 }
-
-const image = (src: string, width: number, height: number, alt: string): MenuImage => ({
-  src,
-  width,
-  height,
-  alt,
-});
-
-const supportingMedia: Record<string, MenuImage> = {
-  'musical-tina-turner': image(
-    '/media/cantante.jpg',
-    2200,
-    1166,
-    'Cantante en directo bajo una luz cálida, frente al público.',
-  ),
-  'banda-efecto-stendhal': image(
-    '/media/voces.jpg',
-    2200,
-    1468,
-    'Voces de la banda durante una actuación iluminada en azul.',
-  ),
-  'opera-pop': image(
-    '/media/tenor.jpg',
-    1467,
-    2200,
-    'Cantante de ópera pop interpretando una pieza en directo.',
-  ),
-  'solistas-instrumentales': image(
-    '/media/guitarra.jpg',
-    1710,
-    920,
-    'Músicos de cuerda interpretando una pieza en un evento.',
-  ),
-  'bandas-y-formaciones': image(
-    '/media/cantante.jpg',
-    2200,
-    1166,
-    'Cantante acompañada por su formación en directo.',
-  ),
-  'los-bridgerton': image(
-    '/media/cuerdas.jpg',
-    2200,
-    1465,
-    'Músicos y personajes de época en la presentación de Los Bridgerton.',
-  ),
-  'la-casa-del-dragon': image(
-    '/media/crucero.jpg',
-    2200,
-    1236,
-    'Ensamble instrumental actuando en una presentación.',
-  ),
-  'arte-en-vivo': image(
-    '/media/epoca.jpg',
-    1260,
-    2200,
-    'Intérpretes de época caracterizados para una intervención artística.',
-  ),
-  'bodypaint-interactivo': image(
-    '/media/casa.jpg',
-    1650,
-    2200,
-    'Artistas caracterizados durante una intervención escénica.',
-  ),
-  'danza-espanola': image(
-    '/media/abanicos.jpg',
-    1637,
-    2200,
-    'Tres bailarinas de danza española con vestidos claros y abanicos rojos.',
-  ),
-  'flamenco-contemporaneo': image(
-    '/media/patio.jpg',
-    2200,
-    1650,
-    'Bailarinas de flamenco contemporáneo en un patio iluminado.',
-  ),
-  'flamenco-mapping': image(
-    '/media/menu/mapping-dance.jpg',
-    2000,
-    1333,
-    'Compañía de danza entre luz azul y proyecciones de medusas.',
-  ),
-  'performances-circenses': image(
-    '/media/zancos.jpg',
-    2200,
-    2165,
-    'Dúo de artistas de fantasía, uno de ellos sobre zancos.',
-  ),
-  'ilusionismo-y-magia': image(
-    '/media/mascaras.jpg',
-    2200,
-    1676,
-    'Personajes enmascarados en una ambientación fantástica.',
-  ),
-  'bailarines-con-tecnologia-led': image(
-    '/media/alas.jpg',
-    2200,
-    1650,
-    'Bailarinas con grandes alas azules iluminadas con tecnología LED.',
-  ),
-  'espectaculos-laser-y-led': image(
-    '/media/farol.jpg',
-    2200,
-    1169,
-    'Artista de rojo bajo haces de luz azul en un espectáculo tecnológico.',
-  ),
-  'inmersive-mapping-dance': image(
-    '/media/menu/flamenco-mapping.jpg',
-    2000,
-    1125,
-    'Bailarines frente a una gran esfera proyectada sobre el escenario.',
-  ),
-};
 ---
 
 <BaseLayout title={section.seoTitle} description={section.seoDescription} path={menuHref(section.slug)} overlay>
@@ -171,12 +59,11 @@ const supportingMedia: Record<string, MenuImage> = {
     <div class="gallery">
       {
         section.acts.map((act, actIndex) => {
-          const mainImage = act.image ?? section.image;
-          const supportingImage = supportingMedia[act.id];
+          const mainImage = act.image;
 
           return (
             <article
-              class:list={['act', actIndex % 2 === 1 && 'is-reversed', supportingImage && 'has-support']}
+              class:list={['act', actIndex % 2 === 1 && 'is-reversed']}
               id={act.id}
               data-reveal
             >
@@ -190,18 +77,6 @@ const supportingMedia: Record<string, MenuImage> = {
                   loading="lazy"
                 />
               </figure>
-              {supportingImage && (
-                <figure class="support-media" aria-hidden="true">
-                  <img
-                    src={supportingImage.src}
-                    width={supportingImage.width}
-                    height={supportingImage.height}
-                    alt=""
-                    decoding="async"
-                    loading="lazy"
-                  />
-                </figure>
-              )}
               <div class="act-copy">
                 <h2>{act.title}</h2>
                 {act.texts.map((text) => <p>{text}</p>)}
@@ -422,15 +297,10 @@ const supportingMedia: Record<string, MenuImage> = {
   }
 
   .primary-media img,
-  .support-media img,
   .next-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-  }
-
-  .act:nth-child(3n + 1) .primary-media img {
-    object-position: center 32%;
   }
 
   .act-copy {
@@ -450,44 +320,6 @@ const supportingMedia: Record<string, MenuImage> = {
 
   .is-reversed .act-copy {
     grid-column: 1 / span 6;
-  }
-
-  .act:nth-child(3n) .primary-media {
-    grid-column: 2 / -2;
-    height: min(84vh, 58rem);
-  }
-
-  .act:nth-child(3n) .act-copy {
-    grid-column: 2 / span 6;
-    margin-bottom: 0;
-    transform: translateY(2.5rem);
-  }
-
-  .act:nth-child(3n).is-visible .act-copy {
-    transform: translateY(2.5rem);
-  }
-
-  .act:nth-child(3n) .support-media {
-    top: auto;
-    right: 2.5%;
-    bottom: -8%;
-  }
-
-  .support-media {
-    position: absolute;
-    right: 0;
-    top: -6%;
-    z-index: 1;
-    width: clamp(10rem, 24vw, 19rem);
-    aspect-ratio: 4 / 5;
-    margin: 0;
-    overflow: hidden;
-    box-shadow: 0 1.5rem 5rem rgba(0, 0, 0, 0.5);
-  }
-
-  .is-reversed .support-media {
-    right: auto;
-    left: 0;
   }
 
   h2 {
@@ -563,7 +395,6 @@ const supportingMedia: Record<string, MenuImage> = {
   }
 
   [data-reveal] .primary-media,
-  [data-reveal] .support-media,
   [data-reveal] .act-copy {
     opacity: 0;
     transform: translateY(2.25rem);
@@ -572,16 +403,11 @@ const supportingMedia: Record<string, MenuImage> = {
       transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  [data-reveal] .support-media {
+  [data-reveal] .act-copy {
     transition-delay: 0.12s;
   }
 
-  [data-reveal] .act-copy {
-    transition-delay: 0.2s;
-  }
-
   [data-reveal].is-visible .primary-media,
-  [data-reveal].is-visible .support-media,
   [data-reveal].is-visible .act-copy {
     opacity: 1;
     transform: none;
@@ -707,36 +533,12 @@ const supportingMedia: Record<string, MenuImage> = {
       margin-inline: calc(var(--spacing-gutter) * -1);
     }
 
-    .support-media,
-    .is-reversed .support-media {
-      position: relative;
-      right: auto;
-      left: auto;
-      width: 48%;
-      margin: -5rem 0 0 auto;
-      aspect-ratio: 4 / 5;
-    }
-
-    .is-reversed .support-media {
-      margin-right: auto;
-      margin-left: 0;
-    }
-
     .act-copy,
     .is-reversed .act-copy {
       width: calc(100% - 1.5rem);
       margin: -1.5rem 0 0;
       padding: 1.5rem 0 0;
       background: var(--color-canvas);
-    }
-
-    .has-support .act-copy {
-      margin-top: 1.75rem;
-    }
-
-    .act:nth-child(3n) .act-copy,
-    .act:nth-child(3n).is-visible .act-copy {
-      transform: none;
     }
 
     h2 {
@@ -756,7 +558,6 @@ const supportingMedia: Record<string, MenuImage> = {
   @media (prefers-reduced-motion: reduce) {
     .hero > img,
     [data-reveal] .primary-media,
-    [data-reveal] .support-media,
     [data-reveal] .act-copy {
       animation: none;
       opacity: 1;

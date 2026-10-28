@@ -10,7 +10,7 @@ export type MenuAct = {
   title: string;
   texts: string[];
   note?: string;
-  image?: MenuImage;
+  image: MenuImage;
 };
 
 export type MenuSection = {
@@ -34,10 +34,10 @@ export const menuSections: MenuSection[] = [
     seoDescription:
       'Esta sección presenta artistas musicales, desde solistas hasta bandas. Su música conecta con el público a través de letras, melodías y ritmos únicos.',
     image: {
-      src: '/media/banda.jpg',
+      src: '/media/cantante.jpg',
       width: 2200,
-      height: 1044,
-      alt: 'El musical de Tina Turner, con la banda en el escenario y el público al frente.',
+      height: 1166,
+      alt: 'Cantante con vestido de flecos dorados durante una actuación en directo.',
     },
     acts: [
       {
@@ -85,10 +85,10 @@ export const menuSections: MenuSection[] = [
     seoDescription:
       'Disponemos de los mejores músicos que forman parte de los grandes musicales, orquesta, espectáculos y bandas más importantes de nuestro país.',
     image: {
-      src: '/media/menu/solistas.jpg',
-      width: 2000,
-      height: 1409,
-      alt: 'Violinista tocando entre dos artistas sobre zancos, con tocados de plumas.',
+      src: '/media/guitarra.jpg',
+      width: 1710,
+      height: 920,
+      alt: 'Cantante y músicos actuando en directo bajo luces cálidas.',
     },
     acts: [
       {
@@ -125,10 +125,10 @@ export const menuSections: MenuSection[] = [
     seoDescription:
       'Disponemos de los mejores actores, músicos para todo tipo de eventos. Presentaciones de Bridgerton, Wicked, Percy Jackson y La casa del dragón.',
     image: {
-      src: '/media/menu/bridgerton.jpg',
-      width: 2000,
-      height: 1331,
-      alt: 'Elenco de Los Bridgerton, con instrumentos, frente al arco de la presentación.',
+      src: '/media/conferencia.jpg',
+      width: 2200,
+      height: 1466,
+      alt: 'Presentación en un auditorio ante una gran pantalla de escenario.',
     },
     acts: [
       {
@@ -202,6 +202,12 @@ export const menuSections: MenuSection[] = [
           'Una original y cautivadora experiencia artística en vivo.',
           'Una propuesta escénica combinación de performance y Live Painting. El artista pintará una obra en vivo personalizada sobre el vestido de una modelo bailarina creando una exclusiva obra de Arte.',
         ],
+        image: {
+          src: '/media/conjunto.jpg',
+          width: 2200,
+          height: 1650,
+          alt: 'Conjunto de artistas caracterizados durante una performance temática.',
+        },
       },
       {
         id: 'bodypaint-interactivo',
@@ -209,6 +215,12 @@ export const menuSections: MenuSection[] = [
         texts: [
           'Arte en vivo donde el cuerpo se convierte en un lienzo, fusionando la pintura con la expresión artística.',
         ],
+        image: {
+          src: '/media/mascaras.jpg',
+          width: 2200,
+          height: 1676,
+          alt: 'Tres intérpretes caracterizados durante una intervención temática.',
+        },
       },
     ],
   },
@@ -222,10 +234,10 @@ export const menuSections: MenuSection[] = [
     seoDescription:
       'Esta propuesta combina los movimientos apasionados y enérgicos del flamenco tradicional con elementos coreográficos contemporáneos en cada evento.',
     image: {
-      src: '/media/escalinata.jpg',
+      src: '/media/patio.jpg',
       width: 2200,
-      height: 1466,
-      alt: 'Bailarina con vestido rojo de volantes y abanico, en una escalinata con cuerda.',
+      height: 1650,
+      alt: 'Bailarina de flamenco con una gran cola roja en un patio de piedra.',
     },
     acts: [
       {
@@ -318,10 +330,10 @@ export const menuSections: MenuSection[] = [
     seoDescription:
       'Fusionan arte y tecnología para crear experiencias visuales y sensoriales impactantes: bailarines con LED, espectáculos láser y mapping dance.',
     image: {
-      src: '/media/menu/led-bailarines.jpg',
-      width: 1500,
-      height: 2000,
-      alt: 'Bailarina con alas de luz LED, de espaldas, en una escalera.',
+      src: '/media/alas.jpg',
+      width: 2200,
+      height: 1465,
+      alt: 'Artista con grandes alas de luz durante una presentación.',
     },
     acts: [
       {
@@ -360,6 +372,13 @@ export const menuSections: MenuSection[] = [
     ],
   },
 ];
+
+for (const section of menuSections) {
+  const sources = [section.image.src, ...section.acts.map((act) => act.image.src)];
+  if (new Set(sources).size !== sources.length) {
+    throw new Error(`La sección "${section.title}" contiene imágenes repetidas.`);
+  }
+}
 
 export const menuIndexSeo = {
   title: 'Menú de espectáculos y artistas | El Efecto Stendhal',

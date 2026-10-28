@@ -1,6 +1,5 @@
 ---
 import { getSettings } from '../lib/content';
-import { menuHref, menuSections } from '../data/menu';
 
 interface Props {
   currentPath: string;
@@ -13,11 +12,11 @@ const onHome = path === '/';
 
 const links = [
   { href: '/', label: 'Inicio', current: onHome },
-  ...menuSections.map((section) => ({
-    href: menuHref(section.slug),
-    label: section.title,
-    current: path === menuHref(section.slug),
-  })),
+  { href: '/#sobre', label: 'Sobre nosotros', current: false },
+  { href: '/menu', label: 'Artistas', current: path === '/menu' || path.startsWith('/menu/') },
+  { href: '/#producciones', label: 'Producciones', current: false },
+  { href: '/#a-medida', label: 'A medida', current: false },
+  { href: '/#inspirate', label: 'Inspírate', current: false },
   { href: '/#contacto', label: 'Contacto', current: false },
 ];
 ---
@@ -141,6 +140,19 @@ const links = [
 
   if (video instanceof HTMLVideoElement && soundBtn instanceof HTMLButtonElement) {
     let wantsSound = true;
+    const startAt = Number(video.dataset.startAt ?? 0);
+
+    const cueOpeningFrame = () => {
+      if (Number.isFinite(startAt) && startAt > 0 && video.currentTime < 0.5) {
+        video.currentTime = startAt;
+      }
+    };
+
+    if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
+      cueOpeningFrame();
+    } else {
+      video.addEventListener('loadedmetadata', cueOpeningFrame, { once: true });
+    }
 
     const syncSoundUi = () => {
       soundBtn.classList.toggle('is-live', wantsSound);
@@ -450,9 +462,6 @@ const links = [
   .is-open nav li:nth-child(5) a { animation-delay: 0.16s; }
   .is-open nav li:nth-child(6) a { animation-delay: 0.2s; }
   .is-open nav li:nth-child(7) a { animation-delay: 0.24s; }
-  .is-open nav li:nth-child(8) a { animation-delay: 0.28s; }
-  .is-open nav li:nth-child(9) a { animation-delay: 0.32s; }
-
   @keyframes nav-in {
     from {
       opacity: 0;
