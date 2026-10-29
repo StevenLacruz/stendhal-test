@@ -1,5 +1,6 @@
 ---
 import { getSettings } from '../lib/content';
+import { menuHref, menuSections } from '../data/menu';
 
 interface Props {
   currentPath: string;
@@ -10,15 +11,17 @@ const settings = await getSettings();
 const path = currentPath.length > 1 ? currentPath.replace(/\/$/, '') : currentPath;
 const onHome = path === '/';
 
-const links = [
+const linksBeforeMenu = [
   { href: '/', label: 'Inicio', current: onHome },
   { href: '/#sobre', label: 'Sobre nosotros', current: false },
-  { href: '/menu', label: 'Artistas', current: path === '/menu' || path.startsWith('/menu/') },
+];
+const linksAfterMenu = [
   { href: '/#producciones', label: 'Producciones', current: false },
   { href: '/#a-medida', label: 'A medida', current: false },
   { href: '/#inspirate', label: 'Inspírate', current: false },
   { href: '/#contacto', label: 'Contacto', current: false },
 ];
+const onMenu = path === '/menu' || path.startsWith('/menu/');
 ---
 
 <header class="masthead" data-masthead>
@@ -86,11 +89,48 @@ const links = [
     </button>
   </div>
   <nav id="navegacion" aria-label="Navegación principal" data-menu-panel>
-    <ul>
+    <ul class="primary-nav">
       {
-        links.map((link) => (
+        linksBeforeMenu.map((link) => (
           <li>
             <a class="tap-target" href={link.href} aria-current={link.current ? 'page' : undefined}>
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+      <li class:list={['nav-group', onMenu && 'is-current']} data-nav-group>
+        <button
+          class="nav-section-toggle tap-target"
+          type="button"
+          aria-expanded="false"
+          aria-controls="categorias-lo-que-hacemos"
+          data-nav-section-toggle
+        >
+          <span>Lo que hacemos</span>
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M3 6.25 8 11l5-4.75" />
+          </svg>
+        </button>
+        <ul id="categorias-lo-que-hacemos" class="nav-submenu" data-nav-submenu hidden>
+          {
+            menuSections.map((section) => (
+              <li>
+                <a
+                  href={menuHref(section.slug)}
+                  aria-current={path === menuHref(section.slug) ? 'page' : undefined}
+                >
+                  {section.title}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </li>
+      {
+        linksAfterMenu.map((link) => (
+          <li>
+            <a class="tap-target" href={link.href}>
               {link.label}
             </a>
           </li>
@@ -104,17 +144,32 @@ const links = [
   const header = document.querySelector('[data-masthead]');
   const toggle = document.querySelector('[data-menu-toggle]');
   const panel = document.querySelector('[data-menu-panel]');
+  const sectionToggle = document.querySelector('[data-nav-section-toggle]');
+  const submenu = document.querySelector('[data-nav-submenu]');
 
   if (header instanceof HTMLElement && toggle instanceof HTMLButtonElement && panel) {
+    const setSectionOpen = (open: boolean) => {
+      if (!(sectionToggle instanceof HTMLButtonElement) || !(submenu instanceof HTMLElement)) return;
+      sectionToggle.setAttribute('aria-expanded', String(open));
+      submenu.hidden = !open;
+    };
+
     const setOpen = (open: boolean) => {
       header.classList.toggle('is-open', open);
       document.body.classList.toggle('menu-open', open);
       toggle.setAttribute('aria-expanded', String(open));
+      if (!open) setSectionOpen(false);
     };
 
     toggle.addEventListener('click', () => {
       setOpen(toggle.getAttribute('aria-expanded') !== 'true');
     });
+
+    if (sectionToggle instanceof HTMLButtonElement && submenu instanceof HTMLElement) {
+      sectionToggle.addEventListener('click', () => {
+        setSectionOpen(sectionToggle.getAttribute('aria-expanded') !== 'true');
+      });
+    }
 
     panel.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => {
@@ -268,6 +323,7 @@ const links = [
   .brand,
   .mast-mail,
   .menu-toggle,
+  .nav-section-toggle,
   nav a {
     text-decoration: none;
   }
@@ -430,7 +486,7 @@ const links = [
     display: flex;
   }
 
-  ul {
+  .primary-nav {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -440,7 +496,8 @@ const links = [
     list-style: none;
   }
 
-  nav a {
+  nav a,
+  .nav-section-toggle {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
@@ -452,16 +509,72 @@ const links = [
     text-transform: uppercase;
   }
 
-  .is-open nav a {
+  .nav-section-toggle {
+    gap: 0.65rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .nav-section-toggle svg {
+    width: 0.85rem;
+    height: 0.85rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.25;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .nav-section-toggle[aria-expanded='true'] svg {
+    transform: rotate(180deg);
+  }
+
+  .nav-group.is-current > .nav-section-toggle {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .nav-submenu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+    margin: 0.15rem 0 0.55rem;
+    padding: 0 0 0 clamp(0.85rem, 2vw, 1.5rem);
+    border-left: 1px solid rgba(255, 255, 255, 0.28);
+    list-style: none;
+  }
+
+  .nav-submenu[hidden] {
+    display: none;
+  }
+
+  .nav-submenu a {
+    min-height: 36px;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: clamp(0.76rem, 1.15vw, 0.92rem);
+    letter-spacing: 0.11em;
+  }
+
+  .nav-submenu a:hover,
+  .nav-submenu a:focus-visible,
+  .nav-submenu a[aria-current='page'] {
+    color: #fff;
+  }
+
+  .is-open nav a,
+  .is-open .nav-section-toggle {
     animation: nav-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
-  .is-open nav li:nth-child(2) a { animation-delay: 0.04s; }
-  .is-open nav li:nth-child(3) a { animation-delay: 0.08s; }
-  .is-open nav li:nth-child(4) a { animation-delay: 0.12s; }
-  .is-open nav li:nth-child(5) a { animation-delay: 0.16s; }
-  .is-open nav li:nth-child(6) a { animation-delay: 0.2s; }
-  .is-open nav li:nth-child(7) a { animation-delay: 0.24s; }
+  .is-open .primary-nav > li:nth-child(2) > :first-child { animation-delay: 0.04s; }
+  .is-open .primary-nav > li:nth-child(3) > :first-child { animation-delay: 0.08s; }
+  .is-open .primary-nav > li:nth-child(4) > :first-child { animation-delay: 0.12s; }
+  .is-open .primary-nav > li:nth-child(5) > :first-child { animation-delay: 0.16s; }
+  .is-open .primary-nav > li:nth-child(6) > :first-child { animation-delay: 0.2s; }
+  .is-open .primary-nav > li:nth-child(7) > :first-child { animation-delay: 0.24s; }
   @keyframes nav-in {
     from {
       opacity: 0;
@@ -490,13 +603,19 @@ const links = [
       padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
     }
 
-    nav a {
+    nav a,
+    .nav-section-toggle {
       min-height: 2.35rem;
       font-size: 1.3rem;
     }
 
-    ul {
+    .primary-nav {
       gap: 0.15rem;
+    }
+
+    .nav-submenu a {
+      min-height: 2rem;
+      font-size: 0.78rem;
     }
   }
 </style>

@@ -381,9 +381,9 @@ for (const section of menuSections) {
 }
 
 export const menuIndexSeo = {
-  title: 'Menú de espectáculos y artistas | El Efecto Stendhal',
+  title: 'Lo que hacemos: artistas para eventos | El Efecto Stendhal',
   description:
-    'Menú de El Efecto Stendhal: música, bandas, solistas, música en vivo, presentaciones, performances, flamenco y espectáculos tecnológicos para tu evento.',
+    'Descubre lo que hacemos: música, bandas, solistas, presentaciones, performances, flamenco y espectáculos tecnológicos para tu evento en Madrid.',
 };
 
 export function menuHref(slug: string) {
