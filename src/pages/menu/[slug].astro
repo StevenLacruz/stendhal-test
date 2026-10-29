@@ -119,13 +119,23 @@ if (!section || !next) {
 
 <script>
   const items = document.querySelectorAll<HTMLElement>('[data-reveal]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if ('IntersectionObserver' in window) {
+  const reveal = (item: HTMLElement) => {
+    item.classList.add('is-visible');
+    item.removeAttribute('inert');
+  };
+
+  if (reduce || !('IntersectionObserver' in window)) {
+    for (const item of items) reveal(item);
+  } else {
+    for (const item of items) item.setAttribute('inert', '');
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          entry.target.classList.add('is-visible');
+          if (!entry.isIntersecting || !(entry.target instanceof HTMLElement)) continue;
+          reveal(entry.target);
           observer.unobserve(entry.target);
         }
       },
@@ -133,8 +143,6 @@ if (!section || !next) {
     );
 
     for (const item of items) observer.observe(item);
-  } else {
-    for (const item of items) item.classList.add('is-visible');
   }
 </script>
 
@@ -411,6 +419,15 @@ if (!section || !next) {
   [data-reveal].is-visible .act-copy {
     opacity: 1;
     transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] .primary-media,
+    [data-reveal] .act-copy {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 
   .next {

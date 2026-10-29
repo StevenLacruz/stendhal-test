@@ -15,8 +15,8 @@ const description =
   <main id="contenido">
     <h1>Esta página no está en el sitio</h1>
     <p>
-      La dirección no existe o se ha movido. Puedes volver al inicio o escribir a
-      {settings.data.email}.
+      La dirección no existe o se ha movido. Puedes volver al inicio o escribir a{' '}
+      <a href={`mailto:${settings.data.email}`}>{settings.data.email}</a>.
     </p>
     <CtaLink href="/">Volver al inicio</CtaLink>
   </main>
@@ -40,5 +40,10 @@ const description =
   p {
     margin: 0 0 2rem;
     color: var(--color-muted);
+  }
+
+  a {
+    color: #fff;
+    text-underline-offset: 0.28em;
   }
 </style>

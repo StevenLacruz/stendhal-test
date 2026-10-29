@@ -88,7 +88,7 @@ const onMenu = path === '/menu' || path.startsWith('/menu/');
       <span class="label-close">Cerrar</span>
     </button>
   </div>
-  <nav id="navegacion" aria-label="Navegación principal" data-menu-panel>
+  <nav id="navegacion" aria-label="Navegación principal" data-menu-panel hidden>
     <ul class="primary-nav">
       {
         linksBeforeMenu.map((link) => (
@@ -147,18 +147,61 @@ const onMenu = path === '/menu' || path.startsWith('/menu/');
   const sectionToggle = document.querySelector('[data-nav-section-toggle]');
   const submenu = document.querySelector('[data-nav-submenu]');
 
-  if (header instanceof HTMLElement && toggle instanceof HTMLButtonElement && panel) {
+  if (header instanceof HTMLElement && toggle instanceof HTMLButtonElement && panel instanceof HTMLElement) {
+    const focusableSelector =
+      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    let lastFocused: HTMLElement | null = null;
+
+    const getInertTargets = () =>
+      [...document.body.children].filter(
+        (node): node is HTMLElement => node instanceof HTMLElement && node !== header,
+      );
+
     const setSectionOpen = (open: boolean) => {
       if (!(sectionToggle instanceof HTMLButtonElement) || !(submenu instanceof HTMLElement)) return;
       sectionToggle.setAttribute('aria-expanded', String(open));
       submenu.hidden = !open;
     };
 
+    const trapFocus = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab' || !header.classList.contains('is-open')) return;
+      const focusables = [toggle, ...panel.querySelectorAll<HTMLElement>(focusableSelector)].filter(
+        (el) => el instanceof HTMLElement && !el.hasAttribute('disabled') && el.offsetParent !== null,
+      );
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (!first || !last) return;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
     const setOpen = (open: boolean) => {
       header.classList.toggle('is-open', open);
       document.body.classList.toggle('menu-open', open);
       toggle.setAttribute('aria-expanded', String(open));
-      if (!open) setSectionOpen(false);
+      panel.hidden = !open;
+
+      for (const target of getInertTargets()) {
+        if (open) target.setAttribute('inert', '');
+        else target.removeAttribute('inert');
+      }
+
+      if (open) {
+        lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : toggle;
+        const firstLink = panel.querySelector<HTMLElement>('a, button');
+        window.setTimeout(() => (firstLink ?? toggle).focus(), 0);
+        document.addEventListener('keydown', trapFocus);
+      } else {
+        setSectionOpen(false);
+        document.removeEventListener('keydown', trapFocus);
+        (lastFocused ?? toggle).focus();
+      }
     };
 
     toggle.addEventListener('click', () => {
@@ -178,7 +221,10 @@ const onMenu = path === '/menu' || path.startsWith('/menu/');
     });
 
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === 'Escape' && header.classList.contains('is-open')) {
+        event.preventDefault();
+        setOpen(false);
+      }
     });
 
     const syncSolid = () => {
@@ -298,11 +344,11 @@ const onMenu = path === '/menu' || path.startsWith('/menu/');
     inset-inline: 0;
     background: linear-gradient(
       to bottom,
-      rgba(10, 9, 6, 0.55) 0%,
-      rgba(10, 9, 6, 0.12) 70%,
-      transparent 100%
+      rgba(10, 9, 6, 0.88) 0%,
+      rgba(10, 9, 6, 0.55) 55%,
+      rgba(10, 9, 6, 0.18) 100%
     );
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
   }
 
   :global(.is-overlay) .masthead.is-solid,
@@ -474,7 +520,7 @@ const onMenu = path === '/menu' || path.startsWith('/menu/');
     position: fixed;
     inset: 0;
     z-index: 1;
-    display: none;
+    display: flex;
     align-items: flex-start;
     padding: clamp(5.25rem, 12vh, 7.5rem) var(--spacing-gutter) max(2.5rem, env(safe-area-inset-bottom));
     background: var(--color-canvas);
@@ -482,8 +528,8 @@ const onMenu = path === '/menu' || path.startsWith('/menu/');
     overscroll-behavior: contain;
   }
 
-  .is-open nav {
-    display: flex;
+  nav[hidden] {
+    display: none;
   }
 
   .primary-nav {
@@ -552,7 +598,7 @@ const onMenu = path === '/menu' || path.startsWith('/menu/');
   }
 
   .nav-submenu a {
-    min-height: 36px;
+    min-height: 44px;
     color: rgba(255, 255, 255, 0.72);
     font-size: clamp(0.76rem, 1.15vw, 0.92rem);
     letter-spacing: 0.11em;
@@ -605,7 +651,7 @@ const onMenu = path === '/menu' || path.startsWith('/menu/');
 
     nav a,
     .nav-section-toggle {
-      min-height: 2.35rem;
+      min-height: 44px;
       font-size: 1.3rem;
     }
 
@@ -614,7 +660,7 @@ const onMenu = path === '/menu' || path.startsWith('/menu/');
     }
 
     .nav-submenu a {
-      min-height: 2rem;
+      min-height: 44px;
       font-size: 0.78rem;
     }
   }

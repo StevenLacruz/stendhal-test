@@ -150,7 +150,7 @@ const logos = [
   overlay
   showFooter={false}
 >
-  <main>
+  <main id="contenido" tabindex="-1">
     <section class="frame hero" id="inicio">
       <video
         autoplay
@@ -162,6 +162,7 @@ const logos = [
         height="1080"
         data-hero-video
         data-start-at="5.5"
+        aria-label="Showreel de El Efecto Stendhal: música y escena en directo"
       >
         <source src="/media/showreel.mp4#t=5.5" type="video/mp4" />
       </video>
@@ -173,6 +174,9 @@ const logos = [
         <p class="hero-sub">{subheadline}</p>
         <a class="pill hero-cta" href="#formulario">Cuéntanos tu evento</a>
       </div>
+      <button class="media-toggle" type="button" data-hero-pause aria-pressed="false">
+        Pausar vídeo
+      </button>
       <span class="sweep" aria-hidden="true"></span>
     </section>
 
@@ -214,9 +218,14 @@ const logos = [
       <a class="pill" href="/menu">Descubrir todas las posibilidades →</a>
     </section>
 
-    <section class="logo-marquee" aria-label="Empresas que confían en nosotros" tabindex="0">
-      <p class="eyebrow logos-label">Empresas que confían en nosotros</p>
-      <div class="logo-track">
+    <section class="logo-marquee" aria-label="Empresas que confían en nosotros" data-logo-marquee>
+      <div class="logos-head">
+        <p class="eyebrow logos-label">Empresas que confían en nosotros</p>
+        <button class="media-toggle is-inline" type="button" data-logo-pause aria-pressed="false">
+          Pausar logos
+        </button>
+      </div>
+      <div class="logo-track" data-logo-track>
         {
           [0, 1].map((copy) => (
             <ul class:list={['logo-set', copy === 1 && 'is-clone']} aria-hidden={copy === 1 ? 'true' : undefined}>
@@ -245,6 +254,7 @@ const logos = [
           rel="noopener noreferrer"
         >
           <span>@elefectostendhal</span>
+          <span class="visually-hidden">(se abre en una nueva ventana)</span>
           <span aria-hidden="true">↗</span>
         </a>
       </div>
@@ -279,9 +289,13 @@ const logos = [
         width="1280"
         height="864"
         data-flamenco
+        aria-label="Pieza de flamenco en directo"
       >
         <source src="/media/flamenco.mp4" type="video/mp4" />
       </video>
+      <button class="media-toggle is-on-media" type="button" data-flamenco-pause aria-pressed="false">
+        Pausar vídeo
+      </button>
     </figure>
 
     <section class="sheet productions" id="producciones">
@@ -349,8 +363,8 @@ const logos = [
         <span>Inspírate</span>
       </h2>
       <p class="micro">Revista visual. Imágenes y vídeos. Resumen de eventos.</p>
-      <div class="reel">
-        <ul class="reel-track" tabindex="0" aria-label="Imágenes para inspirarte">
+      <div class="reel" data-reel>
+        <ul class="reel-track" tabindex="0" aria-label="Imágenes para inspirarte" data-reel-track>
           <li>
             <img src="/media/patio.jpg" width="2200" height="1650" alt="Cola roja sobre la piedra de un patio, a plena luz." loading="lazy" />
           </li>
@@ -373,6 +387,9 @@ const logos = [
           <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
             <path d="M9.5 5.5 16 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
+        </button>
+        <button class="media-toggle is-on-media is-reel" type="button" data-reel-pause aria-pressed="false">
+          Pausar carrusel
         </button>
       </div>
     </section>
@@ -436,57 +453,72 @@ const logos = [
       </form>
     </section>
 
-    <footer class="colophon">
-      <a class="foot-logo" href="#inicio">
-        <img src="/brand/logo.png" width="937" height="542" alt="El Efecto Stendhal" />
-      </a>
-      <a class="mail" href={mail}>{settings.data.email}</a>
-      <p class="tag">{headline}</p>
-      <p class="legal"><small>© {year} {settings.data.siteName}</small></p>
-    </footer>
   </main>
+  <footer class="colophon">
+    <a class="foot-logo" href="#inicio" aria-label="El Efecto Stendhal">
+      <img src="/brand/logo.png" width="937" height="542" alt="" />
+    </a>
+    <a class="mail" href={mail}>{settings.data.email}</a>
+    <p class="tag">{headline}</p>
+    <p class="legal"><small>© {year} {settings.data.siteName}</small></p>
+  </footer>
 </BaseLayout>
 
 <script>
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const heroVideo = document.querySelector('[data-hero-video]');
+  const heroPause = document.querySelector('[data-hero-pause]');
   const flamenco = document.querySelector('[data-flamenco]');
+  const flamencoPause = document.querySelector('[data-flamenco-pause]');
 
-  if (heroVideo instanceof HTMLVideoElement) {
+  const bindVideoPause = (
+    video: Element | null,
+    button: Element | null,
+    autoPlayOnView: boolean,
+  ) => {
+    if (!(video instanceof HTMLVideoElement) || !(button instanceof HTMLButtonElement)) return;
+    let userPaused = reduce;
+
+    const sync = () => {
+      const paused = video.paused;
+      button.setAttribute('aria-pressed', String(paused));
+      button.textContent = paused ? 'Reanudar vídeo' : 'Pausar vídeo';
+    };
+
+    button.addEventListener('click', () => {
+      userPaused = !video.paused;
+      if (video.paused) void video.play();
+      else video.pause();
+      sync();
+    });
+
+    video.addEventListener('play', sync);
+    video.addEventListener('pause', sync);
+
     if (reduce) {
-      heroVideo.pause();
-    } else {
-      if ('IntersectionObserver' in window) {
-        const heroObserver = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) heroVideo.play();
-              else heroVideo.pause();
-            });
-          },
-          { threshold: 0.35 },
-        );
-        heroObserver.observe(heroVideo);
-      }
+      video.pause();
+      sync();
+      return;
     }
-  }
 
-  if (flamenco instanceof HTMLVideoElement) {
-    if (reduce) {
-      flamenco.pause();
-    } else if ('IntersectionObserver' in window) {
+    if (autoPlayOnView && 'IntersectionObserver' in window) {
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
-            if (entry.isIntersecting) flamenco.play();
-            else flamenco.pause();
+            if (entry.isIntersecting && !userPaused) void video.play();
+            else video.pause();
           });
         },
         { threshold: 0.35 },
       );
-      observer.observe(flamenco);
+      observer.observe(video);
     }
-  }
+
+    sync();
+  };
+
+  bindVideoPause(heroVideo, heroPause, true);
+  bindVideoPause(flamenco, flamencoPause, true);
 
   document.querySelectorAll('[data-intent]').forEach((link) => {
     link.addEventListener('click', () => {
@@ -501,13 +533,20 @@ const logos = [
     });
   });
 
-  const reel = document.querySelector('.reel-track');
+  const reel = document.querySelector('[data-reel-track]');
   const reelPrev = document.querySelector('[data-reel-prev]');
   const reelNext = document.querySelector('[data-reel-next]');
+  const reelPause = document.querySelector('[data-reel-pause]');
   if (reel instanceof HTMLElement && reelPrev instanceof HTMLButtonElement && reelNext instanceof HTMLButtonElement) {
     const slides = [...reel.querySelectorAll(':scope > li')];
     let index = 0;
     let reelTimer = 0;
+    let paused = reduce;
+    const syncPause = () => {
+      if (!(reelPause instanceof HTMLButtonElement)) return;
+      reelPause.setAttribute('aria-pressed', String(paused));
+      reelPause.textContent = paused ? 'Reanudar carrusel' : 'Pausar carrusel';
+    };
     const readIndex = () => {
       const origin = slides[0] instanceof HTMLElement ? slides[0].offsetLeft : 0;
       let nearest = 0;
@@ -522,7 +561,7 @@ const logos = [
       });
       index = nearest;
     };
-    const go = (next) => {
+    const go = (next: number) => {
       if (!slides.length) return;
       index = (next + slides.length) % slides.length;
       const slide = slides[index];
@@ -536,37 +575,65 @@ const logos = [
     const stopReel = () => window.clearInterval(reelTimer);
     const startReel = () => {
       stopReel();
-      if (document.hidden || slides.length < 2) return;
+      if (paused || reduce || document.hidden || slides.length < 2) return;
       reelTimer = window.setInterval(() => go(index + 1), 3200);
     };
     reelPrev.addEventListener('click', () => {
       go(index - 1);
-      startReel();
+      if (!paused) startReel();
     });
     reelNext.addEventListener('click', () => {
       go(index + 1);
-      startReel();
+      if (!paused) startReel();
     });
+    if (reelPause instanceof HTMLButtonElement) {
+      reelPause.addEventListener('click', () => {
+        paused = !paused;
+        syncPause();
+        if (paused) stopReel();
+        else startReel();
+      });
+    }
     reel.addEventListener('scrollend', readIndex);
     reel.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowRight') {
         event.preventDefault();
         go(index + 1);
-        startReel();
+        if (!paused) startReel();
       }
       if (event.key === 'ArrowLeft') {
         event.preventDefault();
         go(index - 1);
-        startReel();
+        if (!paused) startReel();
       }
     });
-    reel.addEventListener('pointerdown', stopReel);
-    reel.addEventListener('pointerup', () => window.setTimeout(startReel, 2800));
+    reel.addEventListener('focusin', stopReel);
+    reel.addEventListener('focusout', () => {
+      if (!paused) window.setTimeout(startReel, 400);
+    });
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) stopReel();
-      else startReel();
+      else if (!paused) startReel();
     });
+    syncPause();
     startReel();
+  }
+
+  const logoTrack = document.querySelector('[data-logo-track]');
+  const logoPause = document.querySelector('[data-logo-pause]');
+  if (logoTrack instanceof HTMLElement && logoPause instanceof HTMLButtonElement) {
+    let logosPaused = reduce;
+    const syncLogos = () => {
+      logoTrack.classList.toggle('is-paused', logosPaused);
+      logoPause.setAttribute('aria-pressed', String(logosPaused));
+      logoPause.textContent = logosPaused ? 'Reanudar logos' : 'Pausar logos';
+      logoPause.hidden = reduce;
+    };
+    logoPause.addEventListener('click', () => {
+      logosPaused = !logosPaused;
+      syncLogos();
+    });
+    syncLogos();
   }
 
   const form = document.querySelector('[data-proposal]');
@@ -607,6 +674,62 @@ const logos = [
   .hero {
     place-items: end start;
     padding: 0 var(--spacing-gutter) clamp(1.75rem, 4vh, 2.75rem);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .media-toggle {
+    position: relative;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.65rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 999px;
+    background: rgba(10, 9, 6, 0.72);
+    color: #fff;
+    font: inherit;
+    font-size: var(--text-label);
+    letter-spacing: 0.14em;
+    line-height: 1;
+    text-transform: uppercase;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+  }
+
+  .media-toggle.is-inline {
+    position: static;
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .media-toggle.is-on-media {
+    position: absolute;
+    right: var(--spacing-gutter);
+    bottom: 1.25rem;
+  }
+
+  .hero .media-toggle {
+    position: absolute;
+    right: var(--spacing-gutter);
+    bottom: clamp(1.75rem, 4vh, 2.75rem);
+  }
+
+  .media-toggle.is-reel {
+    bottom: auto;
+    top: 1rem;
   }
 
   .hero-copy {
@@ -926,13 +1049,18 @@ const logos = [
     mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
   }
 
-  .logo-marquee:focus-visible {
-    outline-offset: -6px;
+  .logos-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem 1.25rem;
+    margin: 0 0 1.4rem;
+    padding-inline: var(--spacing-gutter);
   }
 
   .logos-label {
-    margin: 0 0 1.4rem;
-    padding-inline: var(--spacing-gutter);
+    margin: 0;
     text-align: center;
   }
 
@@ -942,6 +1070,7 @@ const logos = [
     animation: drift 70s linear infinite;
   }
 
+  .logo-track.is-paused,
   .logo-marquee:hover .logo-track,
   .logo-marquee:focus-within .logo-track {
     animation-play-state: paused;
@@ -981,6 +1110,10 @@ const logos = [
   .bleed {
     position: relative;
     margin: 0;
+  }
+
+  .video-bleed {
+    position: relative;
   }
 
   .video-bleed video {
@@ -1056,10 +1189,9 @@ const logos = [
 
   .instagram-embed iframe {
     position: absolute;
-    top: -158px;
-    left: 0;
+    inset: 0;
     width: 100%;
-    height: calc(100% + 158px);
+    height: 100%;
     border: 0;
     background: #0a0a0a;
     filter: saturate(0.82) contrast(1.06);
@@ -1072,16 +1204,6 @@ const logos = [
     filter: saturate(1) contrast(1);
   }
 
-  .instagram-embed::after {
-    content: "";
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: 0.75rem;
-    background: #0a0a0a;
-    pointer-events: none;
-  }
 
   @keyframes instagram-in {
     from {
@@ -1607,6 +1729,11 @@ const logos = [
     }
 
     .logo-set.is-clone {
+      display: none;
+    }
+
+    .media-toggle.is-reel,
+    [data-logo-pause] {
       display: none;
     }
   }
