@@ -3,6 +3,7 @@ import Analytics from '@vercel/analytics/astro';
 import SkipLink from '../components/SkipLink.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import WhatsAppFloat from '../components/WhatsAppFloat.astro';
 import SEO from '../components/SEO.astro';
 import '../styles/global.css';
 
@@ -54,6 +55,7 @@ const currentPath = Astro.url.pathname;
     <SiteHeader currentPath={currentPath} />
     <slot />
     {showFooter && <SiteFooter />}
+    <WhatsAppFloat />
     <Analytics />
   </body>
 </html>

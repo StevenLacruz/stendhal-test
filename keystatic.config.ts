@@ -152,6 +152,10 @@ export default config({
           label: 'Email de contacto',
           validation: { isRequired: true },
         }),
+        whatsapp: fields.text({
+          label: 'WhatsApp',
+          description: 'Número con prefijo internacional, p. ej. +34633340905.',
+        }),
         socials: fields.array(
           fields.object({
             label: fields.text({

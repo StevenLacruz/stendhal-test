@@ -55,6 +55,7 @@ const settings = defineCollection({
     defaultDescription: seoDescription,
     ogImage: z.string().min(1),
     email: z.string().email(),
+    whatsapp: z.string().min(1).optional(),
     socials: z.array(
       z.object({
         label: z.string().min(1),
