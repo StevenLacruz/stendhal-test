@@ -174,9 +174,6 @@ const logos = [
         <p class="hero-sub">{subheadline}</p>
         <a class="pill hero-cta" href="#formulario">Cuéntanos tu evento</a>
       </div>
-      <button class="media-toggle" type="button" data-hero-pause aria-pressed="false">
-        Pausar vídeo
-      </button>
       <span class="sweep" aria-hidden="true"></span>
     </section>
 
@@ -293,9 +290,6 @@ const logos = [
       >
         <source src="/media/flamenco.mp4" type="video/mp4" />
       </video>
-      <button class="media-toggle is-on-media" type="button" data-flamenco-pause aria-pressed="false">
-        Pausar vídeo
-      </button>
     </figure>
 
     <section class="sheet productions" id="producciones">
@@ -467,58 +461,29 @@ const logos = [
 <script>
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const heroVideo = document.querySelector('[data-hero-video]');
-  const heroPause = document.querySelector('[data-hero-pause]');
   const flamenco = document.querySelector('[data-flamenco]');
-  const flamencoPause = document.querySelector('[data-flamenco-pause]');
 
-  const bindVideoPause = (
-    video: Element | null,
-    button: Element | null,
-    autoPlayOnView: boolean,
-  ) => {
-    if (!(video instanceof HTMLVideoElement) || !(button instanceof HTMLButtonElement)) return;
-    let userPaused = reduce;
-
-    const sync = () => {
-      const paused = video.paused;
-      button.setAttribute('aria-pressed', String(paused));
-      button.textContent = paused ? 'Reanudar vídeo' : 'Pausar vídeo';
-    };
-
-    button.addEventListener('click', () => {
-      userPaused = !video.paused;
-      if (video.paused) void video.play();
-      else video.pause();
-      sync();
-    });
-
-    video.addEventListener('play', sync);
-    video.addEventListener('pause', sync);
-
+  const bindAutoplayOnView = (video: Element | null) => {
+    if (!(video instanceof HTMLVideoElement)) return;
     if (reduce) {
       video.pause();
-      sync();
       return;
     }
-
-    if (autoPlayOnView && 'IntersectionObserver' in window) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting && !userPaused) void video.play();
-            else video.pause();
-          });
-        },
-        { threshold: 0.35 },
-      );
-      observer.observe(video);
-    }
-
-    sync();
+    if (!('IntersectionObserver' in window)) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) void video.play();
+          else video.pause();
+        });
+      },
+      { threshold: 0.35 },
+    );
+    observer.observe(video);
   };
 
-  bindVideoPause(heroVideo, heroPause, true);
-  bindVideoPause(flamenco, flamencoPause, true);
+  bindAutoplayOnView(heroVideo);
+  bindAutoplayOnView(flamenco);
 
   document.querySelectorAll('[data-intent]').forEach((link) => {
     link.addEventListener('click', () => {
@@ -719,12 +684,6 @@ const logos = [
     position: absolute;
     right: var(--spacing-gutter);
     bottom: 1.25rem;
-  }
-
-  .hero .media-toggle {
-    position: absolute;
-    right: var(--spacing-gutter);
-    bottom: clamp(1.75rem, 4vh, 2.75rem);
   }
 
   .media-toggle.is-reel {
