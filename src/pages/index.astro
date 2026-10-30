@@ -105,24 +105,53 @@ const concepts = [
 
 const paths = [
   {
+    id: 'organizar',
     title: 'Sé qué evento tengo',
     text: 'Quiero organizar un evento',
     src: '/media/palace.jpg',
     alt: 'Vestíbulo de un hotel con un recibimiento de tocados y plumas.',
+    intent: 'Organizar un evento',
+    headingA: 'Cuéntanos',
+    headingB: 'tu evento',
+    talk: 'Fecha, lugar y formato. Nosotros diseñamos la pieza artística.',
+    placeholder: 'Fecha aproximada, ciudad, tipo de evento, aforo, espacio…',
+    submit: 'Cuéntanos tu evento',
   },
   {
+    id: 'impacto',
     title: 'Sé lo que quiero conseguir',
     text: 'Quiero sorprender / emocionar / cerrar con impacto.',
     src: '/media/escalinata.jpg',
     alt: 'Vestido rojo bajando una escalinata de piedra al aire libre.',
+    intent: 'Buscar impacto emocional',
+    headingA: 'Cuéntanos',
+    headingB: 'el efecto',
+    talk: 'Qué quieres que sienta la gente. Nosotros lo convertimos en escena.',
+    placeholder: 'La emoción que buscas, el momento clave, el cierre que imaginas…',
+    submit: 'Cuéntanos el efecto',
   },
   {
+    id: 'inspirame',
     title: 'No tengo ni idea',
     text: 'Inspírame.',
     src: '/media/jardin.jpg',
     alt: 'Zancos y vestuario de flamenco en un jardín.',
+    intent: 'Pedir inspiración',
+    headingA: 'Inspírame',
+    headingB: 'sin brief',
+    talk: 'Sin brief cerrado. Empezamos por conversar y te proponemos caminos.',
+    placeholder: 'Sector, ciudad, fechas flexibles, lo que sí o sí no quieres…',
+    submit: 'Pídenos inspiración',
   },
 ];
+
+const formDefaults = {
+  headingA: 'Cuéntanos',
+  headingB: 'tu evento',
+  talk: 'Cuéntanos lo esencial. Nosotros pensamos cómo hacerlo realidad.',
+  placeholder: 'Cuéntanos lo esencial de tu idea o evento…',
+  submit: 'Cuéntanos tu evento',
+};
 
 const logos = [
   { src: '/logos/repsol.svg', alt: 'Repsol' },
@@ -215,14 +244,9 @@ const logos = [
       <a class="pill" href="/menu">Descubrir todas las posibilidades →</a>
     </section>
 
-    <section class="logo-marquee" aria-label="Empresas que confían en nosotros" data-logo-marquee>
-      <div class="logos-head">
-        <p class="eyebrow logos-label">Empresas que confían en nosotros</p>
-        <button class="media-toggle is-inline" type="button" data-logo-pause aria-pressed="false">
-          Pausar logos
-        </button>
-      </div>
-      <div class="logo-track" data-logo-track>
+    <section class="logo-marquee" aria-label="Empresas que confían en nosotros">
+      <p class="eyebrow logos-label">Empresas que confían en nosotros</p>
+      <div class="logo-track">
         {
           [0, 1].map((copy) => (
             <ul class:list={['logo-set', copy === 1 && 'is-clone']} aria-hidden={copy === 1 ? 'true' : undefined}>
@@ -399,7 +423,17 @@ const logos = [
         {
           paths.map((item, i) => (
             <li>
-              <a class="tile path" href="#formulario" data-intent={item.text}>
+              <a
+                class="tile path"
+                href="#formulario"
+                data-path={item.id}
+                data-intent={item.intent}
+                data-heading-a={item.headingA}
+                data-heading-b={item.headingB}
+                data-talk={item.talk}
+                data-placeholder={item.placeholder}
+                data-submit={item.submit}
+              >
                 <img src={item.src} width="2200" height="1460" alt="" loading="lazy" />
                 <span class="tile-copy">
                   <span class="path-n">{String(i + 1).padStart(2, '0')}</span>
@@ -412,16 +446,16 @@ const logos = [
           ))
         }
       </ul>
-      <a class="pill" href="#formulario">Hablemos de tu evento →</a>
+      <a class="pill" href="#formulario" data-path-reset>Hablemos de tu evento →</a>
     </section>
 
     <section class="sheet contact" id="formulario">
       <div class="contact-intro">
-        <h2 class="display">
-          <span>Cuéntanos</span>
-          <span>tu evento</span>
+        <h2 class="display" data-form-heading>
+          <span data-form-heading-a>{formDefaults.headingA}</span>
+          <span data-form-heading-b>{formDefaults.headingB}</span>
         </h2>
-        <p class="talk">Cuéntanos lo esencial. Nosotros pensamos cómo hacerlo realidad.</p>
+        <p class="talk" data-form-talk>{formDefaults.talk}</p>
         <a class="contact-mail" href={mail}>{settings.data.email}</a>
       </div>
       <form data-proposal action={mail} method="post">
@@ -429,21 +463,27 @@ const logos = [
         <input type="hidden" name="intencion" data-intent-field value="" />
         <label>
           Nombre
-          <input name="nombre" type="text" autocomplete="name" required />
+          <input name="nombre" type="text" autocomplete="name" required placeholder="Tu nombre" />
         </label>
         <label>
           Email
-          <input name="email" type="email" autocomplete="email" required />
+          <input name="email" type="email" autocomplete="email" required placeholder="tu@email.com" />
         </label>
         <label>
           Teléfono
-          <input name="telefono" type="tel" autocomplete="tel" />
+          <input name="telefono" type="tel" autocomplete="tel" placeholder="Opcional" />
         </label>
         <label>
           Mensaje
-          <textarea name="mensaje" rows="4" required></textarea>
+          <textarea
+            name="mensaje"
+            rows="5"
+            required
+            data-mensaje
+            placeholder={formDefaults.placeholder}
+          ></textarea>
         </label>
-        <button class="pill" type="submit">Cuéntanos tu evento</button>
+        <button class="pill" type="submit" data-form-submit>{formDefaults.submit}</button>
       </form>
     </section>
 
@@ -485,17 +525,77 @@ const logos = [
   bindAutoplayOnView(heroVideo);
   bindAutoplayOnView(flamenco);
 
-  document.querySelectorAll('[data-intent]').forEach((link) => {
-    link.addEventListener('click', () => {
-      const value = link.getAttribute('data-intent') ?? '';
-      const field = document.querySelector('[data-intent-field]');
-      const label = document.querySelector('[data-intent-label]');
-      if (field instanceof HTMLInputElement) field.value = value;
-      if (label instanceof HTMLElement) {
-        label.hidden = value.length === 0;
-        label.textContent = value;
+  const headingA = document.querySelector('[data-form-heading-a]');
+  const headingB = document.querySelector('[data-form-heading-b]');
+  const formTalk = document.querySelector('[data-form-talk]');
+  const intentField = document.querySelector('[data-intent-field]');
+  const intentLabel = document.querySelector('[data-intent-label]');
+  const messageField = document.querySelector('[data-mensaje]');
+  const submitButton = document.querySelector('[data-form-submit]');
+  const pathLinks = [...document.querySelectorAll<HTMLAnchorElement>('[data-path]')];
+  const defaultForm = {
+    headingA: 'Cuéntanos',
+    headingB: 'tu evento',
+    talk: 'Cuéntanos lo esencial. Nosotros pensamos cómo hacerlo realidad.',
+    placeholder: 'Cuéntanos lo esencial de tu idea o evento…',
+    submit: 'Cuéntanos tu evento',
+    intent: '',
+  };
+
+  const applyPath = (config: {
+    headingA: string;
+    headingB: string;
+    talk: string;
+    placeholder: string;
+    submit: string;
+    intent: string;
+    pathId: string | null;
+  }) => {
+    if (headingA instanceof HTMLElement) headingA.textContent = config.headingA;
+    if (headingB instanceof HTMLElement) headingB.textContent = config.headingB;
+    if (formTalk instanceof HTMLElement) {
+      formTalk.id = 'form-path-hint';
+      formTalk.textContent = config.talk;
+    }
+    if (intentField instanceof HTMLInputElement) intentField.value = config.intent;
+    if (intentLabel instanceof HTMLElement) {
+      intentLabel.hidden = config.intent.length === 0;
+      intentLabel.textContent = config.intent ? `Camino: ${config.intent}` : '';
+    }
+    if (submitButton instanceof HTMLButtonElement) submitButton.textContent = config.submit;
+    if (messageField instanceof HTMLTextAreaElement) {
+      messageField.placeholder = config.placeholder;
+      messageField.setAttribute('aria-describedby', 'form-path-hint');
+    }
+
+    for (const link of pathLinks) {
+      if (config.pathId && link.getAttribute('data-path') === config.pathId) {
+        link.setAttribute('aria-current', 'true');
+      } else {
+        link.removeAttribute('aria-current');
       }
+    }
+  };
+
+  for (const link of pathLinks) {
+    link.addEventListener('click', () => {
+      applyPath({
+        headingA: link.getAttribute('data-heading-a') ?? defaultForm.headingA,
+        headingB: link.getAttribute('data-heading-b') ?? defaultForm.headingB,
+        talk: link.getAttribute('data-talk') ?? defaultForm.talk,
+        placeholder: link.getAttribute('data-placeholder') ?? defaultForm.placeholder,
+        submit: link.getAttribute('data-submit') ?? defaultForm.submit,
+        intent: link.getAttribute('data-intent') ?? '',
+        pathId: link.getAttribute('data-path'),
+      });
+      window.setTimeout(() => {
+        if (messageField instanceof HTMLTextAreaElement) messageField.focus({ preventScroll: true });
+      }, 0);
     });
+  }
+
+  document.querySelector('[data-path-reset]')?.addEventListener('click', () => {
+    applyPath({ ...defaultForm, pathId: null });
   });
 
   const reel = document.querySelector('[data-reel-track]');
@@ -584,23 +684,6 @@ const logos = [
     startReel();
   }
 
-  const logoTrack = document.querySelector('[data-logo-track]');
-  const logoPause = document.querySelector('[data-logo-pause]');
-  if (logoTrack instanceof HTMLElement && logoPause instanceof HTMLButtonElement) {
-    let logosPaused = reduce;
-    const syncLogos = () => {
-      logoTrack.classList.toggle('is-paused', logosPaused);
-      logoPause.setAttribute('aria-pressed', String(logosPaused));
-      logoPause.textContent = logosPaused ? 'Reanudar logos' : 'Pausar logos';
-      logoPause.hidden = reduce;
-    };
-    logoPause.addEventListener('click', () => {
-      logosPaused = !logosPaused;
-      syncLogos();
-    });
-    syncLogos();
-  }
-
   const form = document.querySelector('[data-proposal]');
   if (form instanceof HTMLFormElement) {
     form.addEventListener('submit', (event) => {
@@ -613,10 +696,11 @@ const logos = [
       const intencion = String(data.get('intencion') ?? '').trim();
       const lines = [`Nombre: ${nombre}`, `Email: ${email}`];
       if (telefono) lines.push(`Teléfono: ${telefono}`);
-      if (intencion) lines.push(`Intención: ${intencion}`);
+      if (intencion) lines.push(`Camino: ${intencion}`);
       lines.push('', mensaje);
       const body = lines.join('\n');
-      const href = `mailto:eventos@elefectostendhal.com?subject=${encodeURIComponent('Propuesta')}&body=${encodeURIComponent(body)}`;
+      const subject = intencion ? `Propuesta — ${intencion}` : 'Propuesta';
+      const href = `mailto:eventos@elefectostendhal.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
       window.location.href = href;
     });
   }
@@ -672,12 +756,6 @@ const logos = [
     text-transform: uppercase;
     cursor: pointer;
     backdrop-filter: blur(8px);
-  }
-
-  .media-toggle.is-inline {
-    position: static;
-    background: transparent;
-    border-color: rgba(255, 255, 255, 0.35);
   }
 
   .media-toggle.is-on-media {
@@ -1008,18 +1086,9 @@ const logos = [
     mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
   }
 
-  .logos-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 0.85rem 1.25rem;
+  .logos-label {
     margin: 0 0 1.4rem;
     padding-inline: var(--spacing-gutter);
-  }
-
-  .logos-label {
-    margin: 0;
     text-align: center;
   }
 
@@ -1029,7 +1098,6 @@ const logos = [
     animation: drift 70s linear infinite;
   }
 
-  .logo-track.is-paused,
   .logo-marquee:hover .logo-track,
   .logo-marquee:focus-within .logo-track {
     animation-play-state: paused;
@@ -1271,6 +1339,20 @@ const logos = [
   .paths .tile:hover .path-go,
   .paths .tile:focus-visible .path-go {
     transform: translateX(0.35rem);
+  }
+
+  .paths .tile[aria-current='true'] {
+    outline: 1px solid rgba(255, 255, 255, 0.72);
+    outline-offset: 0.35rem;
+  }
+
+  .paths .tile[aria-current='true'] img {
+    transform: scale(1.03);
+  }
+
+  form [data-intent-label]:not([hidden]) {
+    margin: 0 0 0.35rem;
+    color: rgba(255, 255, 255, 0.72);
   }
 
   .tile img,
@@ -1519,14 +1601,27 @@ const logos = [
     border-bottom: 1px solid rgba(255, 255, 255, 0.28);
     border-radius: 0;
     background: transparent;
-    color: inherit;
+    color: #fff;
     font: inherit;
     font-size: 1rem;
     letter-spacing: 0;
     text-transform: none;
   }
 
+  input::placeholder,
+  textarea::placeholder {
+    color: rgba(255, 255, 255, 0.62);
+    opacity: 1;
+  }
+
+  input::-webkit-input-placeholder,
+  textarea::-webkit-input-placeholder {
+    color: rgba(255, 255, 255, 0.62);
+    opacity: 1;
+  }
+
   textarea {
+    min-height: 7.5rem;
     resize: vertical;
   }
 
@@ -1691,8 +1786,7 @@ const logos = [
       display: none;
     }
 
-    .media-toggle.is-reel,
-    [data-logo-pause] {
+    .media-toggle.is-reel {
       display: none;
     }
   }
